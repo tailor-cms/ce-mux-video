@@ -6,7 +6,7 @@
 
 <script lang="ts" setup>
 import { defineEmits, defineProps } from 'vue';
-import { Element } from 'tce-manifest';
+import { Element } from '@tailor-cms/ce-mux-video-manifest';
 
 defineEmits(['save']);
 defineProps<{

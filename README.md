@@ -1,7 +1,6 @@
-# tce-template
+# ce-mux-video
 
-Base template for Tailor Content Element Kit. For more details see
-[docs](https://tailor-cms.github.io/xt/).
+Tailor MUX video content element component.
 
 ## Usage
 

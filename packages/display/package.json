@@ -1,6 +1,7 @@
 {
-  "name": "tce-display",
-  "private": true,
+  "name": "@tailor-cms/ce-mux-video-display",
+  "description": "Tailor CMS MUX video end-user component",
+  "author": "Studion <info@gostudion.com> (https://github.com/tailor-cms)",
   "type": "module",
   "version": "0.0.1",
   "exports": {
@@ -27,13 +28,14 @@
     "vue": "^3.5.13"
   },
   "devDependencies": {
+    "@tailor-cms/ce-mux-video-manifest": "workspace:*",
     "@tailor-cms/eslint-config": "1.1.2",
     "@vitejs/plugin-vue": "^6.0.0",
-    "tce-manifest": "workspace:*",
     "typescript": "^5.8.3",
     "vite": "^7.0.3",
     "vue-tsc": "^3.0.1"
   },
-  "description": "Tailor CMS MUX video element",
-  "author": "Studion <info@gostudion.com> (https://github.com/tailor-cms)"
+  "publishConfig": {
+    "access": "public"
+  }
 }

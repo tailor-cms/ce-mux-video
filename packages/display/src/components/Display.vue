@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { Element } from 'tce-manifest';
+import { Element } from '@tailor-cms/ce-mux-video-manifest';
 
 defineProps<{ element: Element; userState: any }>();
 defineEmits(['interaction']);

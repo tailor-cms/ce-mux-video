@@ -1,6 +1,6 @@
 {
-  "name": "tce-manifest",
-  "description": "Tailor CMS MUX video element",
+  "name": "@tailor-cms/ce-mux-video-manifest",
+  "description": "Tailor CMS MUX video element manifest",
   "author": "Studion <info@gostudion.com> (https://github.com/tailor-cms)",
   "type": "module",
   "version": "0.0.1",
@@ -46,5 +46,8 @@
     "minify": false,
     "clean": false,
     "dts": true
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

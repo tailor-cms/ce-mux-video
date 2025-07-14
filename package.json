@@ -1,23 +1,10 @@
 {
-  "name": "ce-mux-video",
+  "name": "@tailor-cms/ce-mux-video",
   "description": "Tailor CMS MUX video element",
-  "version": "0.0.1",
   "author": "Studion <info@gostudion.com> (https://github.com/tailor-cms)",
   "type": "module",
-  "exports": {
-    "./edit": {
-      "import": "./packages/edit/dist/index.js",
-      "require": "./packages/edit/dist/index.cjs"
-    },
-    "./display": {
-      "import": "./packages/display/dist/index.js",
-      "require": "./packages/display/dist/index.cjs"
-    },
-    "./server": {
-      "import": "./packages/server/dist/index.js",
-      "require": "./packages/server/dist/index.cjs"
-    }
-  },
+  "version": "0.0.1",
+  "private": true,
   "scripts": {
     "dev": "pnpm boot:cek",
     "boot:cek": "cd ./node_modules/@tailor-cms/tce-boot && pnpm start --default-display",
@@ -40,9 +27,6 @@
     "eslint": "^9.30.1",
     "prettier": "^3.6.2",
     "typescript": "^5.8.3"
-  },
-  "publishConfig": {
-    "access": "public"
   },
   "packageManager": "pnpm@10.12.3"
 }
