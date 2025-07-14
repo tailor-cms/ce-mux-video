@@ -1,0 +1,48 @@
+{
+  "name": "ce-mux-video",
+  "description": "Tailor CMS MUX video element",
+  "version": "0.0.1",
+  "author": "Studion <info@gostudion.com> (https://github.com/tailor-cms)",
+  "type": "module",
+  "exports": {
+    "./edit": {
+      "import": "./packages/edit/dist/index.js",
+      "require": "./packages/edit/dist/index.cjs"
+    },
+    "./display": {
+      "import": "./packages/display/dist/index.js",
+      "require": "./packages/display/dist/index.cjs"
+    },
+    "./server": {
+      "import": "./packages/server/dist/index.js",
+      "require": "./packages/server/dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "dev": "pnpm boot:cek",
+    "boot:cek": "cd ./node_modules/@tailor-cms/tce-boot && pnpm start --default-display",
+    "build": "pnpm -r run build",
+    "lint": "pnpm -r run lint && eslint .",
+    "lint:fix": "pnpm -r run lint --fix && eslint . --fix",
+    "nuke:dist": "pnpm -r run nuke:dist",
+    "nuke": "pnpm -r run nuke && pnpm dlx del-cli node_modules",
+    "test": "pnpm playwright test --config ./test/playwright.config.ts"
+  },
+  "bin": {},
+  "devDependencies": {
+    "@changesets/cli": "^2.29.5",
+    "@playwright/test": "1.53.2",
+    "@tailor-cms/cek-e2e": "^1.3.2",
+    "@tailor-cms/eslint-config": "1.1.2",
+    "@tailor-cms/tce-boot": "1.3.2",
+    "@types/node": "^24.0.12",
+    "dotenv": "^17.1.0",
+    "eslint": "^9.30.1",
+    "prettier": "^3.6.2",
+    "typescript": "^5.8.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "packageManager": "pnpm@10.12.3"
+}
