@@ -24,6 +24,9 @@
     "nuke:dist": "pnpm dlx del-cli dist",
     "prepublish": "pnpm build"
   },
+  "dependencies": {
+    "@mux/mux-player": "^3.5.1"
+  },
   "devDependencies": {
     "@tailor-cms/ce-mux-video-manifest": "workspace:*",
     "@tailor-cms/eslint-config": "1.1.2",

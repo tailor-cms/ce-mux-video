@@ -24,10 +24,16 @@
     "nuke:dist": "pnpm dlx del-cli dist",
     "prepublish": "pnpm build"
   },
+  "dependencies": {
+    "@mux/mux-node": "^12.1.0",
+    "lodash-es": "^4.17.21",
+    "sequelize": "^6.37.7"
+  },
   "devDependencies": {
     "@tailor-cms/ce-mux-video-manifest": "workspace:*",
     "@tailor-cms/cek-common": "^1.3.2",
     "@tailor-cms/eslint-config": "1.1.2",
+    "@types/lodash-es": "^4.17.12",
     "tsup": "^8.5.0",
     "typescript": "^5.8.3"
   },

@@ -1,14 +1,29 @@
 import type { HookServices, ServerRuntime } from '@tailor-cms/cek-common';
 import { initState, mocks, type } from '@tailor-cms/ce-mux-video-manifest';
 import type { Element } from '@tailor-cms/ce-mux-video-manifest';
+import type { Model } from 'sequelize/types';
+
+import MuxService from './mux';
 
 // Detect if hooks are running in CEK (used for mocking end-system runtime)
 const IS_CEK = process.env.CEK_RUNTIME;
 // Don't use in production, use only when IS_CEK=true
 const USER_STATE: any = {};
 
-export function beforeSave(element: Element, _services: HookServices) {
-  console.log('Before save hook');
+type SequelizeModel<T> = Model<T> & T;
+
+export async function beforeSave(
+  element: SequelizeModel<Element>,
+  services: HookServices,
+) {
+  if (element.data.upload) {
+    const uploadId = element.data.upload.id;
+    const service = MuxService.get(services.config.tce);
+    const { asset_id: assetId, ...upload } = await service.getUpload(uploadId);
+    const asset = await service.getAsset(assetId);
+    const playbackId = asset.playback_ids[0].id;
+    element.data = { ...element.data, upload, playbackId };
+  }
   return element;
 }
 
@@ -17,12 +32,17 @@ export function afterSave(element: Element, _services: HookServices) {
   return element;
 }
 
-export function afterLoaded(
-  element: Element,
-  _services: HookServices,
-  _runtime: ServerRuntime,
+export async function afterLoaded(
+  element: SequelizeModel<Element>,
+  services: HookServices,
+  runtime: ServerRuntime,
 ) {
-  console.log('After loaded hook');
+  const isAuthoringRuntime = runtime === 'authoring';
+  const service = MuxService.get(services.config.tce);
+  if (isAuthoringRuntime && !element.data.upload) {
+    const upload = await service.createUpload();
+    element.data = { ...element.data, upload };
+  }
   return element;
 }
 

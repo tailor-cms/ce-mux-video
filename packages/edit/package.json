@@ -25,11 +25,15 @@
     "prepublish": "pnpm build"
   },
   "dependencies": {
-    "@tailor-cms/core-components": "^1.2.0"
+    "@mux/mux-player": "^3.5.1",
+    "@mux/upchunk": "^3.5.0",
+    "@tailor-cms/core-components": "^1.2.0",
+    "lodash-es": "^4.17.21"
   },
   "devDependencies": {
     "@tailor-cms/ce-mux-video-manifest": "workspace:*",
     "@tailor-cms/eslint-config": "1.1.2",
+    "@types/lodash-es": "^4.17.12",
     "@vitejs/plugin-vue": "^6.0.0",
     "typescript": "^5.8.3",
     "vite": "^7.0.3",
