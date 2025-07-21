@@ -49,9 +49,9 @@
 </template>
 
 <script setup lang="ts">
-import { cloneDeep, uniqueId } from 'lodash-es';
 import { computed, defineEmits, defineProps, ref } from 'vue';
 import type { Element } from '@tailor-cms/ce-mux-video-manifest';
+import { uniqueId } from 'lodash-es';
 import { UpChunk } from '@mux/upchunk';
 
 const props = defineProps<{ element: Element }>();
@@ -76,7 +76,7 @@ const uploadVideo = (file: File) => {
     progress.value = detail;
   });
   upload.on('success', () => {
-    save(file.name);
+    emit('save', { ...props.element.data, fileName: file.name });
     loading.value = false;
   });
 };
@@ -88,16 +88,10 @@ const validateAndUpload = async (target: HTMLInputElement) => {
   if (isValid) return uploadVideo(files[0]);
 };
 
-const save = (fileName: string) => {
-  const elementData = Object.assign(cloneDeep(props.element.data), {
-    fileName,
-  });
-  emit('save', elementData);
-};
-
 const remove = () => {
   emit('save', {
     ...props.element.data,
+    token: undefined,
     fileName: undefined,
     playbackId: undefined,
     upload: undefined,

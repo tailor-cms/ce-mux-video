@@ -10,7 +10,11 @@
       active-icon="mdi-arrow-up"
       active-placeholder="Use toolbar to upload the video"
     />
-    <mux-player v-else :playback-id="element.data.playbackId" />
+    <mux-player
+      v-else
+      :playback-id="element.data.playbackId"
+      :playback-token="element.data.token"
+    />
   </div>
 </template>
 

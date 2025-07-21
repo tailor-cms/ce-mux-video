@@ -16,13 +16,15 @@ export async function beforeSave(
   element: SequelizeModel<Element>,
   services: HookServices,
 ) {
-  if (element.data.upload) {
-    const uploadId = element.data.upload.id;
-    const service = MuxService.get(services.config.tce);
+  const service = MuxService.get(services.config.tce);
+  const uploadId = element.data.upload?.id;
+  const playbackId = element.data.playbackId;
+  if (uploadId && !playbackId) {
     const { asset_id: assetId, ...upload } = await service.getUpload(uploadId);
     const asset = await service.getAsset(assetId);
     const playbackId = asset.playback_ids[0].id;
-    element.data = { ...element.data, upload, playbackId };
+    const token = await service.getPlaybackToken(playbackId);
+    element.data = { ...element.data, upload, playbackId, token };
   }
   return element;
 }
@@ -39,7 +41,8 @@ export async function afterLoaded(
 ) {
   const isAuthoringRuntime = runtime === 'authoring';
   const service = MuxService.get(services.config.tce);
-  if (isAuthoringRuntime && !element.data.upload) {
+  const uploadId = element.data.upload?.id;
+  if (isAuthoringRuntime && !uploadId) {
     const upload = await service.createUpload();
     element.data = { ...element.data, upload };
   }

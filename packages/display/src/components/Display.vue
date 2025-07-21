@@ -4,6 +4,7 @@
     <mux-player
       v-if="element.data.playbackId"
       :playback-id="element.data.playbackId"
+      :playback-token="element.data.token"
     />
     <VCard
       v-else

@@ -9,6 +9,7 @@ export interface ElementData extends common.ElementConfig {
   fileName?: string;
   assetId?: string;
   playbackId?: string;
+  token?: string;
 }
 
 export type DataInitializer = common.DataInitializer<ElementData>;
