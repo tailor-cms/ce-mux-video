@@ -17,14 +17,23 @@ export async function beforeSave(
   services: HookServices,
 ) {
   const service = MuxService.get(services.config.tce);
-  const uploadId = element.data.upload?.id;
+  const assetId = element.data.assetId;
   const playbackId = element.data.playbackId;
-  if (uploadId && !playbackId) {
+  const uploadId = element.data.upload?.id;
+  const prevData = element.previous('data') as string;
+  const prevAssetId = prevData ? JSON.parse(prevData)?.assetId : null;
+  if (IS_CEK && prevAssetId && !assetId) {
+    await service.removeAsset(prevAssetId);
+  }
+  if (!uploadId) {
+    const upload = await service.createUpload();
+    element.data = { ...element.data, upload };
+  } else if (!playbackId) {
     const { asset_id: assetId, ...upload } = await service.getUpload(uploadId);
     const asset = await service.getAsset(assetId);
     const playbackId = asset.playback_ids[0].id;
-    const token = await service.getPlaybackToken(playbackId);
-    element.data = { ...element.data, upload, playbackId, token };
+    const token = await service.getToken(playbackId);
+    element.data = { ...element.data, upload, playbackId, token, assetId };
   }
   return element;
 }

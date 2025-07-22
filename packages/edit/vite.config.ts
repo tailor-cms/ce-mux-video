@@ -5,7 +5,15 @@ import { resolve } from 'node:path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue({
+      template: {
+        compilerOptions: {
+          isCustomElement: (tag) => tag.includes('mux'),
+        },
+      },
+    }),
+  ],
   build: {
     // In order to avoid edit runtime issues
     // due to package missing (if dist is deleted for short time)

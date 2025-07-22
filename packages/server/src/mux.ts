@@ -47,7 +47,11 @@ export default class MuxService {
     return this.api.assets.retrieve(assetId);
   }
 
-  getPlaybackToken(playbackId: string) {
+  getToken(playbackId: string) {
     return this.jwt.signPlaybackId(playbackId, { expiration: '7d' });
+  }
+
+  removeAsset(assetId: string) {
+    return this.api.assets.delete(assetId);
   }
 }

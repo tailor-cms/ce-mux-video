@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex align-center justify-center">
-    <VToolbarItems class="ga-2">
+    <VToolbarItems class="ga-2 align-center justify-center">
       <template v-if="fileName">
         <VBtn color="red" icon="mdi-delete" @click="remove" />
         <VTextField
@@ -22,27 +22,33 @@
           type="file"
           @change="validateAndUpload($event.target as HTMLInputElement)"
         />
-        <VBtn
-          v-if="fileInput"
-          :loading="loading"
-          color="grey-darken-4"
-          @click="fileInput.click()"
-        >
-          <VIcon color="secondary" icon="mdi-cloud-upload-outline" start />
-          Upload video
-          <template #loader>
-            <VProgressLinear
-              :model-value="progress"
-              color="primary-lighten-3"
-              height="20"
-              stripped
-            >
-              <template #default>
-                <span class="text-caption">{{ Math.ceil(progress) }}%</span>
-              </template>
-            </VProgressLinear>
+        <template v-if="fileInput">
+          <VBtn
+            v-if="!loading"
+            color="grey-darken-4"
+            @click="fileInput.click()"
+          >
+            <VIcon color="secondary" icon="mdi-cloud-upload-outline" start />
+            Upload video
+          </VBtn>
+          <template v-else>
+            <div class="text-overline">
+              <div class="d-flex align-center justify-space-between">
+                <span>Uploading video...</span>
+                <span>{{ Math.ceil(progress) }}%</span>
+              </div>
+              <VProgressLinear
+                :model-value="progress"
+                class="flex-shrink-0"
+                color="primary"
+                height="15"
+                rounded
+                striped
+              />
+            </div>
+            <VBtn color="red" @click="cancelUpload">Cancel</VBtn>
           </template>
-        </VBtn>
+        </template>
       </template>
     </VToolbarItems>
   </div>
@@ -61,23 +67,25 @@ const extensions = ref(['.mp4', '.mov', '.avi', '.mkv']);
 const progress = ref(0);
 const fileInput = ref<HTMLInputElement>();
 const loading = ref(false);
+const upload = ref<UpChunk | null>(null);
 
 const fileName = computed(() => props.element.data.fileName ?? '');
 
 const uploadVideo = (file: File) => {
   const endpoint = props.element.data.upload?.url ?? '';
   loading.value = true;
-  const upload = UpChunk.createUpload({
+  upload.value = UpChunk.createUpload({
     endpoint,
     file,
     chunkSize: 5120,
   });
-  upload.on('progress', ({ detail }) => {
+  upload.value.on('progress', ({ detail }) => {
     progress.value = detail;
   });
-  upload.on('success', () => {
+  upload.value.on('success', () => {
     emit('save', { ...props.element.data, fileName: file.name });
     loading.value = false;
+    progress.value = 0;
   });
 };
 
@@ -88,19 +96,33 @@ const validateAndUpload = async (target: HTMLInputElement) => {
   if (isValid) return uploadVideo(files[0]);
 };
 
+const cancelUpload = () => {
+  upload.value?.abort();
+  upload.value = null;
+  progress.value = 0;
+  if (fileInput.value) fileInput.value.value = '';
+  loading.value = false;
+  remove();
+};
+
 const remove = () => {
   emit('save', {
     ...props.element.data,
     token: undefined,
     fileName: undefined,
     playbackId: undefined,
+    assetId: undefined,
     upload: undefined,
   });
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .v-toolbar-items {
   height: 3.5rem;
+
+  .v-progress-linear {
+    width: 250px;
+  }
 }
 </style>

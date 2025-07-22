@@ -5,18 +5,18 @@
       v-if="element.data.playbackId"
       :playback-id="element.data.playbackId"
       :playback-token="element.data.token"
+      :thumbnail-token="element.data.token"
     />
     <VCard
       v-else
-      class="pa-12 text-center bg-grey-lighten-5"
-      variant="flat"
-      border
+      class="article-card d-flex flex-column align-center justify-center"
+      color="primary-darken-1"
+      height="250"
+      variant="tonal"
     >
-      <VAvatar color="primary-darken-1" size="60">
-        <VIcon :icon="manifest.ui.icon" size="30" />
-      </VAvatar>
+      <VIcon :icon="manifest.ui.icon" size="500" />
       <VCardTitle class="text-h5 pb-0">{{ manifest.name }} element</VCardTitle>
-      <VCardSubtitle class="text-subtitle-1">Work in progress</VCardSubtitle>
+      <VCardSubtitle class="text-overline">Work in progress</VCardSubtitle>
     </VCard>
   </div>
 </template>
@@ -31,5 +31,18 @@ defineEmits(['interaction']);
 
 <style scoped>
 .tce-mux-video-root {
+}
+
+.v-card {
+  border: 1px dashed color-mix(in srgb, currentColor 36%, transparent);
+
+  .v-icon {
+    position: absolute;
+    opacity: 0.08;
+    left: calc(50% - 15.625rem);
+    top: calc(50% - 15.625rem);
+    z-index: -1;
+    transform: rotate(-15deg);
+  }
 }
 </style>
