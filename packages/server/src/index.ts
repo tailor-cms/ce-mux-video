@@ -32,8 +32,7 @@ export async function beforeSave(
     const { asset_id: assetId, ...upload } = await service.getUpload(uploadId);
     const asset = await service.getAsset(assetId);
     const playbackId = asset.playback_ids[0].id;
-    const token = await service.getToken(playbackId);
-    element.data = { ...element.data, upload, playbackId, token, assetId };
+    element.data = { ...element.data, upload, playbackId, assetId };
   }
   return element;
 }
@@ -51,9 +50,14 @@ export async function afterLoaded(
   const isAuthoringRuntime = runtime === 'authoring';
   const service = MuxService.get(services.config.tce);
   const uploadId = element.data.upload?.id;
+  const playbackId = element.data.playbackId;
   if (isAuthoringRuntime && !uploadId) {
     const upload = await service.createUpload();
     element.data = { ...element.data, upload };
+  }
+  if (playbackId) {
+    const token = await service.getToken(playbackId);
+    element.data = { ...element.data, token };
   }
   return element;
 }

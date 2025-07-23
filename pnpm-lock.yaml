@@ -44,6 +44,9 @@ importers:
       '@mux/mux-player':
         specifier: ^3.5.1
         version: 3.5.1(react@19.1.0)
+      '@tailor-cms/lx-components':
+        specifier: ^0.3.3
+        version: 0.3.3(@types/lodash-es@4.17.12)(lodash-es@4.17.21)(vue@3.5.17(typescript@5.8.3))(vuetify@3.9.0)
       vue:
         specifier: ^3.5.13
         version: 3.5.17(typescript@5.8.3)
@@ -813,6 +816,14 @@ packages:
     resolution: {integrity: sha512-taama/Pu8hVRFg1K5pVFKoxf/vyW9ke1iYUUZz5rzAdM0qTUVYnQrIFTO7KHxNHM8erQzW/M6epW1GX83iohPw==}
     peerDependencies:
       eslint: '>=9.28.0'
+
+  '@tailor-cms/lx-components@0.3.3':
+    resolution: {integrity: sha512-K6LZfJgzfGiAYllde9ds3iTNQaK62aIw/EIIpkMIiT+YEm9eA/U2iYj+CRtZDzScZSA/7Ao3F68gCey3/gtxqw==}
+    peerDependencies:
+      '@types/lodash-es': ^4.17.12
+      lodash-es: ^4.17.21
+      vue: ^3.5.17
+      vuetify: ^3.9.0
 
   '@tailor-cms/tce-boot@1.3.2':
     resolution: {integrity: sha512-DmCC7wzBfhcr9/i1YfqqA4V3ztrNsVL/nHvVr9g5q7XQ4OIUFBT/W+7i6VKlw/rtibn5Oq1Z96dI4lSk5fPDGw==}
@@ -4972,6 +4983,13 @@ snapshots:
       - prettier
       - supports-color
       - typescript
+
+  '@tailor-cms/lx-components@0.3.3(@types/lodash-es@4.17.12)(lodash-es@4.17.21)(vue@3.5.17(typescript@5.8.3))(vuetify@3.9.0)':
+    dependencies:
+      '@types/lodash-es': 4.17.12
+      lodash-es: 4.17.21
+      vue: 3.5.17(typescript@5.8.3)
+      vuetify: 3.9.0(typescript@5.8.3)(vite-plugin-vuetify@2.1.1)(vue@3.5.17(typescript@5.8.3))
 
   '@tailor-cms/tce-boot@1.3.2(@types/node@24.0.12)':
     dependencies:
