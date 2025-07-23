@@ -59,7 +59,7 @@ export async function afterLoaded(
 }
 
 export function afterRetrieve(
-  element: Element,
+  element: SequelizeModel<Element>,
   _services: HookServices,
   _runtime: ServerRuntime,
 ) {
@@ -74,7 +74,7 @@ export function beforeDisplay(_element: Element, context: any) {
 }
 
 export function onUserInteraction(
-  _element: Element,
+  _element: SequelizeModel<Element>,
   context: any,
   payload: any,
 ): any {
