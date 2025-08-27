@@ -74,11 +74,7 @@ const fileName = computed(() => props.element.data.fileName ?? '');
 const uploadVideo = (file: File) => {
   const endpoint = props.element.data.upload?.url ?? '';
   loading.value = true;
-  upload.value = UpChunk.createUpload({
-    endpoint,
-    file,
-    chunkSize: 5120,
-  });
+  upload.value = UpChunk.createUpload({ endpoint, file, chunkSize: 5120 });
   upload.value.on('progress', ({ detail }) => {
     progress.value = detail;
   });
