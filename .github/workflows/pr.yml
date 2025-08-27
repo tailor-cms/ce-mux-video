@@ -15,6 +15,11 @@ jobs:
         run: pnpm lint
   e2e:
     runs-on: ubuntu-latest
+    env:
+      TCE_MUX_TOKEN_ID: ${{ secrets.TCE_MUX_TOKEN_ID }}
+      TCE_MUX_TOKEN_SECRET: ${{ secrets.TCE_MUX_TOKEN_SECRET }}
+      TCE_MUX_JWT_SIGNING_KEY: ${{ secrets.TCE_MUX_JWT_SIGNING_KEY }}
+      TCE_MUX_JWT_PRIVATE_KEY: ${{ secrets.TCE_MUX_JWT_PRIVATE_KEY }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

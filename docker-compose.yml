@@ -5,6 +5,11 @@ services:
     build:
       dockerfile: "./Dockerfile"
       context: "."
+    environment:
+      - TCE_MUX_TOKEN_ID=${TCE_MUX_TOKEN_ID}
+      - TCE_MUX_TOKEN_SECRET=${TCE_MUX_TOKEN_SECRET}
+      - TCE_MUX_JWT_SIGNING_KEY=${TCE_MUX_JWT_SIGNING_KEY}
+      - TCE_MUX_JWT_PRIVATE_KEY=${TCE_MUX_JWT_PRIVATE_KEY}
     # Within docker network
     expose:
       - "8010"

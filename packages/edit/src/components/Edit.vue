@@ -35,7 +35,7 @@ defineProps<{
 </script>
 
 <style scoped>
-.tce-video {
+.tce-mux-video {
   text-align: left;
 }
 </style>
