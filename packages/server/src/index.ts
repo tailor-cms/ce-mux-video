@@ -20,7 +20,7 @@ export async function beforeSave(
   const assetId = element.data.assetId;
   const playbackId = element.data.playbackId;
   const uploadId = element.data.upload?.id;
-  const prevData = element.previous('data') as string;
+  const prevData = element.previous('data') as unknown as string;
   const prevAssetId = prevData ? JSON.parse(prevData)?.assetId : null;
   if (IS_CEK && prevAssetId && !assetId) {
     await service.removeAsset(prevAssetId);

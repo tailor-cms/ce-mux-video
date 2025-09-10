@@ -5,7 +5,6 @@
       v-if="element.data.playbackId"
       :playback-id="element.data.playbackId"
       :playback-token="element.data.token"
-      :thumbnail-token="element.data.token"
     >
       <track
         v-if="element.data.captions"

@@ -14,7 +14,6 @@
       v-else
       :playback-id="element.data.playbackId"
       :playback-token="element.data.token"
-      :thumbnail-token="element.data.token"
     />
   </div>
 </template>
