@@ -12,7 +12,11 @@ export const name = 'MUX Video';
 
 // Function which inits element state (data property on the Content Element
 // entity)
-export const initState: DataInitializer = (): ElementData => ({});
+export const initState: DataInitializer = (): ElementData => ({
+  assets: {},
+  transcript: null,
+  captions: null,
+});
 
 // Can be loaded from package.json
 export const version = '1.0';
