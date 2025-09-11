@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineEmits, defineProps, ref } from 'vue';
+import { computed, defineEmits, defineProps, ref, useTemplateRef } from 'vue';
 import type { Element } from '@tailor-cms/ce-mux-video-manifest';
 import { uniqueId } from 'lodash-es';
 import { UpChunk } from '@mux/upchunk';
@@ -63,9 +63,9 @@ import { UpChunk } from '@mux/upchunk';
 const props = defineProps<{ element: Element }>();
 const emit = defineEmits(['save']);
 
+const fileInput = useTemplateRef<HTMLInputElement>('fileInput');
 const extensions = ref(['.mp4', '.mov', '.avi', '.mkv']);
 const progress = ref(0);
-const fileInput = ref<HTMLInputElement>();
 const loading = ref(false);
 const upload = ref<UpChunk | null>(null);
 

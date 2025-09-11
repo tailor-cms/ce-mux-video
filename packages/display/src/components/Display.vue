@@ -3,8 +3,11 @@
   <div class="tce-mux-video-root">
     <mux-player
       v-if="element.data.playbackId"
+      ref="video"
       :playback-id="element.data.playbackId"
       :playback-token="element.data.token"
+      @seeked="interact"
+      @timeupdate="handleTimeUpdate"
     >
       <track
         v-if="element.data.captions"
@@ -31,10 +34,27 @@
 
 <script setup lang="ts">
 import '@mux/mux-player';
+import { onMounted, useTemplateRef } from 'vue';
 import type { Element } from '@tailor-cms/ce-mux-video-manifest';
+import { throttle } from 'lodash-es';
 
-defineProps<{ element: Element; userState: any }>();
-defineEmits(['interaction']);
+const PROGRESS_UPDATE_INTERVAL = 5000;
+
+const props = defineProps<{ element: Element; userState: any }>();
+const emit = defineEmits(['interaction']);
+
+const video = useTemplateRef<HTMLVideoElement>('video');
+
+const interact = () => {
+  const currentTime = video.value!.currentTime;
+  emit('interaction', { currentTime });
+};
+const handleTimeUpdate = throttle(interact, PROGRESS_UPDATE_INTERVAL);
+
+onMounted(() => {
+  const currentTime = props.userState?.currentTime;
+  if (currentTime && video.value) video.value.currentTime = currentTime;
+});
 </script>
 
 <style scoped>

@@ -33,6 +33,7 @@ import {
 } from '@tailor-cms/cek-common';
 import { defineEmits, defineProps, inject } from 'vue';
 import type { Element } from '@tailor-cms/ce-mux-video-manifest';
+import { last } from 'lodash-es';
 import toWebVTT from 'srt-webvtt';
 
 const props = defineProps<{ element: Element }>();
@@ -41,7 +42,7 @@ const emit = defineEmits(['save']);
 const $storageService = inject('$storageService') as any;
 
 const getFileName = (url?: string | null): { name: string }[] | undefined => {
-  if (url) return [{ name: url.split('___').pop() || 'file' }];
+  if (url) return [{ name: last(url.split('___')) || 'file' }];
 };
 
 const saveData = (updates: Partial<Element['data']>) => {

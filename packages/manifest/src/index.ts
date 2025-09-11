@@ -30,13 +30,6 @@ const ui = {
   forceFullWidth: false,
 };
 
-export const mocks = {
-  displayContexts: [
-    { name: 'Test preset 1', data: { state: 'I have a value' } },
-    { name: 'Test preset 2', data: { state: 'I have a different value' } },
-  ],
-};
-
 const manifest: ElementManifest = {
   type,
   version: '1.0',
@@ -44,7 +37,6 @@ const manifest: ElementManifest = {
   ssr: false,
   initState,
   ui,
-  mocks,
 };
 
 export default manifest;

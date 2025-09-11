@@ -1,5 +1,5 @@
 import type { HookServices, ServerRuntime } from '@tailor-cms/cek-common';
-import { initState, mocks, type } from '@tailor-cms/ce-mux-video-manifest';
+import { initState, type } from '@tailor-cms/ce-mux-video-manifest';
 import type { Element } from '@tailor-cms/ce-mux-video-manifest';
 import type { Model } from 'sequelize/types';
 
@@ -117,7 +117,6 @@ export default {
   afterRetrieve,
   onUserInteraction,
   beforeDisplay,
-  mocks,
 };
 
-export { type, initState, mocks };
+export { type, initState };
