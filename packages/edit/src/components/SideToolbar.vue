@@ -1,5 +1,5 @@
 <template>
-  <div class="side-toolbar">
+  <div>
     <VFileInput
       :model-value="getFileName(element.data.transcript)"
       accept=".doc,.docx,.pdf,.txt"
