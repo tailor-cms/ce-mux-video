@@ -57,9 +57,12 @@ const uploadTranscript = async (e: InputFileEvent) => {
 };
 
 const convertSrtToVtt = async (srtFile: File): Promise<File> => {
-  const vttBlob = await toWebVTT(srtFile);
+  const vttBlobUrl = await toWebVTT(srtFile);
+  const response = await fetch(vttBlobUrl);
+  const vttContent = await response.text();
   const vttFileName = srtFile.name.replace(/\.srt$/i, '.vtt');
-  return new File([vttBlob], vttFileName, { type: 'text/vtt' });
+  URL.revokeObjectURL(vttBlobUrl);
+  return new File([vttContent], vttFileName, { type: 'text/vtt' });
 };
 
 const uploadCaptions = async (e: InputFileEvent) => {

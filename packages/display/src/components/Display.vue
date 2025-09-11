@@ -14,9 +14,9 @@
         srclang="en"
       />
     </mux-player>
-    <div v-if="element.data.captions" class="d-flex justify-end mt-2">
+    <div v-if="element.data.transcript" class="d-flex justify-end mt-2">
       <VBtn
-        :href="element.data.captions"
+        :href="element.data.transcript"
         color="primary"
         prepend-icon="mdi-text"
         size="small"
