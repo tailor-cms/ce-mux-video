@@ -4,7 +4,6 @@ import type { Element } from '@tailor-cms/ce-mux-video-manifest';
 import type { Model } from 'sequelize/types';
 
 import MuxService from './mux';
-import { isString } from 'lodash-es';
 
 // Detect if hooks are running in CEK (used for mocking end-system runtime)
 const IS_CEK = process.env.CEK_RUNTIME;
@@ -21,10 +20,12 @@ export async function beforeSave(
   const assetId = element.data.assetId;
   const playbackId = element.data.playbackId;
   const uploadId = element.data.upload?.id;
-  const prevData = element.previous('data') as any;
-  const prevAssetId = prevData ? (isString(prevData) ? JSON.parse(prevData)?.assetId : prevData.assetId) : null;
-  if (IS_CEK && prevAssetId && !assetId) {
-    await service.removeAsset(prevAssetId);
+  if (IS_CEK) {
+    const prevData = element.previous('data');
+    const prevAssetId = prevData && typeof prevData === 'string'
+      ? JSON.parse(prevData).assetId
+      : prevData?.assetId;
+    if (prevAssetId && !assetId) await service.removeAsset(prevAssetId);
   }
   if (!uploadId) {
     const upload = await service.createUpload();
