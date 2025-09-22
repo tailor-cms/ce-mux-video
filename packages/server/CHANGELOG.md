@@ -1,5 +1,11 @@
 # @tailor-cms/ce-mux-video-server
 
+## 0.0.4
+
+### Patch Changes
+
+- Add config validation and opening captions & transcript.
+
 ## 0.0.3
 
 ### Patch Changes
