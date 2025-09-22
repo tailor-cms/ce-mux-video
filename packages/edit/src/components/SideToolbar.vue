@@ -2,7 +2,7 @@
   <div>
     <VFileInput
       :append-inner-icon="transcript ? 'mdi-open-in-new' : undefined"
-      :model-value="getFileName(transcript)"
+      :model-value="getFileName(element.data.assets.transcript)"
       accept=".doc,.docx,.pdf,.txt"
       label="Transcript"
       prepend-icon="mdi-file-document-outline"
@@ -14,7 +14,7 @@
     />
     <VFileInput
       :append-inner-icon="captions ? 'mdi-open-in-new' : undefined"
-      :model-value="getFileName(captions)"
+      :model-value="getFileName(element.data.assets.captions)"
       accept=".vtt,.srt"
       hint="SRT files will be automatically converted to VTT format"
       label="Captions"
