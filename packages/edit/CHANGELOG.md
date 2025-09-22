@@ -1,5 +1,11 @@
 # @tailor-cms/ce-mux-video-edit
 
+## 0.0.5
+
+### Patch Changes
+
+- Fix filename.
+
 ## 0.0.4
 
 ### Patch Changes
