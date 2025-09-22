@@ -17,9 +17,8 @@ export async function beforeSave(
   services: HookServices,
 ) {
   const service = MuxService.get(services.config.tce);
-  const assetId = element.data.assetId;
-  const playbackId = element.data.playbackId;
-  const uploadId = element.data.upload?.id;
+  const { assetId, playbackId, upload } = element.data;
+  const uploadId = upload?.id;
   if (IS_CEK) {
     const prevData = element.previous('data');
     const prevAssetId = prevData && typeof prevData === 'string'

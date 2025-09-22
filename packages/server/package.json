@@ -27,7 +27,8 @@
   "dependencies": {
     "@mux/mux-node": "^12.1.0",
     "lodash-es": "^4.17.21",
-    "sequelize": "^6.37.7"
+    "sequelize": "^6.37.7",
+    "yup": "^1.7.1"
   },
   "devDependencies": {
     "@tailor-cms/ce-mux-video-manifest": "workspace:*",

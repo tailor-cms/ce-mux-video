@@ -1,18 +1,20 @@
 <template>
   <div>
     <VFileInput
-      :model-value="getFileName(element.data.assets.transcript)"
+      :append-inner-icon="transcript ? 'mdi-open-in-new' : undefined"
+      :model-value="getFileName(transcript)"
       accept=".doc,.docx,.pdf,.txt"
-      append-inner-icon="mdi-open-in-new"
       label="Transcript"
       prepend-icon="mdi-file-document-outline"
       variant="outlined"
       clearable
       @change="uploadTranscript"
+      @click:append-inner.stop="transcript && openInNew(transcript)"
       @click:clear="removeAsset('transcript')"
     />
     <VFileInput
-      :model-value="getFileName(element.data.assets.captions)"
+      :append-inner-icon="captions ? 'mdi-open-in-new' : undefined"
+      :model-value="getFileName(captions)"
       accept=".vtt,.srt"
       hint="SRT files will be automatically converted to VTT format"
       label="Captions"
@@ -21,18 +23,19 @@
       clearable
       persistent-hint
       @change="uploadCaptions"
+      @click:append-inner.stop="captions && openInNew(captions)"
       @click:clear="removeAsset('captions')"
     />
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed, defineEmits, defineProps, inject } from 'vue';
 import {
   createUploadForm,
   InputFileEvent,
   UploadFormData,
 } from '@tailor-cms/cek-common';
-import { defineEmits, defineProps, inject } from 'vue';
 import type { Element } from '@tailor-cms/ce-mux-video-manifest';
 import { last } from 'lodash-es';
 import toWebVTT from 'srt-webvtt';
@@ -41,6 +44,9 @@ const props = defineProps<{ element: Element }>();
 const emit = defineEmits(['save']);
 
 const $storageService = inject('$storageService') as any;
+
+const transcript = computed(() => props.element.data.transcript);
+const captions = computed(() => props.element.data.captions);
 
 const getFileName = (url?: string | null): { name: string }[] | undefined => {
   if (url) return [{ name: last(url.split('___')) || 'file' }];
@@ -82,4 +88,6 @@ const removeAsset = (type: 'transcript' | 'captions') => {
   const assets = { ...props.element.data.assets, [type]: undefined };
   saveData({ [type]: null, assets });
 };
+
+const openInNew = (url: string) => window.open(url, '_blank');
 </script>

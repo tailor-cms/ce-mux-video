@@ -1,5 +1,13 @@
 import { Mux } from '@mux/mux-node';
 import { pick } from 'lodash-es';
+import { object, string } from 'yup';
+
+const schema = object({
+  muxTokenId: string().required(),
+  muxTokenSecret: string().required(),
+  muxJwtSigningKey: string().required(),
+  muxJwtPrivateKey: string().required(),
+});
 
 interface MuxServiceConfig {
   muxTokenId: string;
@@ -15,6 +23,7 @@ export default class MuxService {
   jwt: Mux.Jwt;
 
   private constructor(private config: MuxServiceConfig) {
+    schema.validateSync(this.config);
     const { video, jwt } = new Mux({
       tokenId: this.config.muxTokenId,
       tokenSecret: this.config.muxTokenSecret,
