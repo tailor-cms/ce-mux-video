@@ -21,9 +21,10 @@ export async function beforeSave(
   const uploadId = upload?.id;
   if (IS_CEK) {
     const prevData = element.previous('data');
-    const prevAssetId = prevData && typeof prevData === 'string'
-      ? JSON.parse(prevData).assetId
-      : prevData?.assetId;
+    const prevAssetId =
+      prevData && typeof prevData === 'string'
+        ? JSON.parse(prevData).assetId
+        : prevData?.assetId;
     if (prevAssetId && !assetId) await service.removeAsset(prevAssetId);
   }
   if (!uploadId) {

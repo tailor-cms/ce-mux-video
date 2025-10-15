@@ -1,6 +1,6 @@
+import { object, string } from 'yup';
 import { Mux } from '@mux/mux-node';
 import { pick } from 'lodash-es';
-import { object, string } from 'yup';
 
 const schema = object({
   muxTokenId: string().required(),
