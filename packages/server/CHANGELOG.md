@@ -1,5 +1,11 @@
 # @tailor-cms/ce-mux-video-server
 
+## 0.0.6
+
+### Patch Changes
+
+- Fixed lint errors.
+
 ## 0.0.5
 
 ### Patch Changes
