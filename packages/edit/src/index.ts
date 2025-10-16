@@ -8,9 +8,9 @@ import TopToolbar from './components/TopToolbar.vue';
 const manifest: ElementManifest = {
   ...baseManifest,
   Edit,
-  SideToolbar,
   TopToolbar,
+  SideToolbar,
 };
 
 export default manifest;
-export { Edit, SideToolbar, TopToolbar };
+export { Edit, TopToolbar, SideToolbar };
