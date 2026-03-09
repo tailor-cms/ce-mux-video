@@ -1,7 +1,11 @@
-import type { HookServices, ServerRuntime } from '@tailor-cms/cek-common';
+import type {
+  BeforeDisplayHook,
+  CallHandler,
+  ElementHook,
+  OnUserInteractionHook,
+} from '@tailor-cms/cek-common';
 import { initState, type } from '@tailor-cms/ce-mux-video-manifest';
 import type { Element } from '@tailor-cms/ce-mux-video-manifest';
-import type { Model } from 'sequelize/types';
 
 import MuxService from './mux';
 
@@ -10,80 +14,26 @@ const IS_CEK = process.env.CEK_RUNTIME;
 // Don't use in production, use only when IS_CEK=true
 const USER_STATE: any = {};
 
-type SequelizeModel<T> = Model<T> & T;
-
-export async function beforeSave(
-  element: SequelizeModel<Element>,
-  services: HookServices,
-) {
+export const afterLoaded: ElementHook<Element> = async (element, services) => {
+  const { playbackId } = element.data;
+  if (!playbackId) return element;
   const service = MuxService.get(services.config.tce);
-  const { assetId, playbackId, upload } = element.data;
-  const uploadId = upload?.id;
-  if (IS_CEK) {
-    const prevData = element.previous('data');
-    const prevAssetId =
-      prevData && typeof prevData === 'string'
-        ? JSON.parse(prevData).assetId
-        : prevData?.assetId;
-    if (prevAssetId && !assetId) await service.removeAsset(prevAssetId);
-  }
-  if (!uploadId) {
-    const upload = await service.createUpload();
-    element.data = { ...element.data, upload };
-  } else if (!playbackId) {
-    const { asset_id: assetId, ...upload } = await service.getUpload(uploadId);
-    const asset = await service.getAsset(assetId);
-    const playbackId = asset.playback_ids[0].id;
-    element.data = { ...element.data, upload, playbackId, assetId };
-  }
+  const { token, thumbnailToken } = await service.getTokens(playbackId);
+  element.data = { ...element.data, token, thumbnailToken };
   return element;
-}
+};
 
-export function afterSave(element: Element, _services: HookServices) {
-  console.log('After save hook');
-  return element;
-}
-
-export async function afterLoaded(
-  element: SequelizeModel<Element>,
-  services: HookServices,
-  runtime: ServerRuntime,
-) {
-  const isAuthoringRuntime = runtime === 'authoring';
-  const service = MuxService.get(services.config.tce);
-  const uploadId = element.data.upload?.id;
-  const playbackId = element.data.playbackId;
-  if (isAuthoringRuntime && !uploadId) {
-    const upload = await service.createUpload();
-    element.data = { ...element.data, upload };
-  }
-  if (playbackId) {
-    const token = await service.getToken(playbackId);
-    element.data = { ...element.data, token };
-  }
-  return element;
-}
-
-export function afterRetrieve(
-  element: SequelizeModel<Element>,
-  _services: HookServices,
-  _runtime: ServerRuntime,
-) {
-  console.log('After retrieve hook');
-  return element;
-}
-
-export function beforeDisplay(_element: Element, context: any) {
+export const beforeDisplay: BeforeDisplayHook<Element> = (_element, context) => {
   console.log('beforeDisplay hook');
   console.log('beforeDisplay context', context);
   return { ...context, ...USER_STATE };
-}
+};
 
-export function onUserInteraction(
-  _element: SequelizeModel<Element>,
-  context: any,
-  payload: any,
-): any {
+export const onUserInteraction: OnUserInteractionHook<Element> = (
+  _element,
+  context,
+  payload,
+) => {
   console.log('onUserInteraction', context, payload);
   // Simulate user state update within CEK
   if (IS_CEK) {
@@ -96,27 +46,46 @@ export function onUserInteraction(
   // Can have arbitrary return value (interpreted by target system)
   // FE is updated if updateDisplayState is true
   return { updateDisplayState: true };
-}
+};
+
+const createUpload: CallHandler<Element> = async (_element, services) => {
+  const service = MuxService.get(services.config.tce);
+  return service.createUpload();
+};
+
+const resolveAsset: CallHandler<Element, { uploadId: string }> = async (
+  _element,
+  services,
+  payload,
+) => {
+  const service = MuxService.get(services.config.tce);
+  const { uploadId } = payload;
+  if (!uploadId) throw new Error('No upload to resolve');
+  return service.resolveUpload(uploadId);
+};
+
+const removeVideo: CallHandler<Element> = async (element, services) => {
+  const service = MuxService.get(services.config.tce);
+  const { assetId } = element.data;
+  if (assetId) await service.removeAsset(assetId);
+};
 
 export const hookMap = new Map(
   Object.entries({
-    beforeSave,
-    afterSave,
     afterLoaded,
-    afterRetrieve,
     onUserInteraction,
     beforeDisplay,
   }),
 );
 
+export const call = { createUpload, resolveAsset, removeVideo };
+
 export default {
   type,
   hookMap,
   initState,
-  beforeSave,
-  afterSave,
+  call,
   afterLoaded,
-  afterRetrieve,
   onUserInteraction,
   beforeDisplay,
 };

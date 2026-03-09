@@ -56,8 +56,27 @@ export default class MuxService {
     return this.api.assets.retrieve(assetId);
   }
 
-  getToken(playbackId: string) {
-    return this.jwt.signPlaybackId(playbackId, { expiration: '7d' });
+  async resolveUpload(uploadId: string) {
+    const { asset_id: assetId } = await this.getUpload(uploadId);
+    if (!assetId) return { status: 'waiting' as const };
+    const asset = await this.getAsset(assetId);
+    if (asset.status === 'errored') throw new Error('Asset processing failed');
+    if (asset.status === 'ready') {
+      const playbackId = asset.playback_ids[0].id;
+      return { status: 'ready' as const, assetId, playbackId };
+    }
+    return { status: asset.status };
+  }
+
+  async getTokens(playbackId: string) {
+    const token = await this.jwt.signPlaybackId(playbackId, {
+      expiration: '7d',
+    });
+    const thumbnailToken = await this.jwt.signPlaybackId(playbackId, {
+      expiration: '7d',
+      type: 'thumbnail',
+    });
+    return { token, thumbnailToken };
   }
 
   removeAsset(assetId: string) {

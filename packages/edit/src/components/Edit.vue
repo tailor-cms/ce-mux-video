@@ -14,6 +14,8 @@
       v-else
       :playback-id="element.data.playbackId"
       :playback-token="element.data.token"
+      :thumbnail-token="element.data.thumbnailToken"
+      style="aspect-ratio: 16/9"
     />
   </div>
 </template>
