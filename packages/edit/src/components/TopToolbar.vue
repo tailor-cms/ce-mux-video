@@ -23,18 +23,18 @@
         <template v-if="fileInput">
           <VBtn
             v-if="!loading && !processing"
-            color="grey-darken-4"
+            prepend-icon="mdi-cloud-upload-outline"
+            text="Upload video"
             @click="fileInput.click()"
-          >
-            <VIcon color="secondary" icon="mdi-cloud-upload-outline" start />
-            Upload video
-          </VBtn>
+          />
           <template v-else-if="error">
-            <span class="text-error text-overline">{{ error }}</span>
-            <VBtn color="red" @click="cancelUpload">Dismiss</VBtn>
+            <span class="text-error text-label-medium text-uppercase">
+              {{ error }}
+            </span>
+            <VBtn color="red" text="Dismiss" @click="cancelUpload" />
           </template>
           <template v-else-if="processing">
-            <div class="text-overline">
+            <div class="text-label-medium text-uppercase">
               <span>Processing video...</span>
               <VProgressLinear
                 color="secondary"
@@ -45,7 +45,7 @@
             </div>
           </template>
           <template v-else>
-            <div class="text-overline">
+            <div class="text-label-medium text-uppercase">
               <div class="d-flex align-center justify-space-between">
                 <span>Uploading video...</span>
                 <span>{{ Math.ceil(progress) }}%</span>
@@ -59,7 +59,7 @@
                 striped
               />
             </div>
-            <VBtn color="red" @click="cancelUpload">Cancel</VBtn>
+            <VBtn color="red" text="Cancel" @click="cancelUpload" />
           </template>
         </template>
       </template>
@@ -69,8 +69,8 @@
 
 <script setup lang="ts">
 import { computed, inject, ref, useTemplateRef } from 'vue';
-import type { CallElementAction } from '@tailor-cms/cek-common';
-import type { Element } from 'tce-mux-manifest';
+import type { Element, ElementData } from '@tailor-cms/ce-mux-video-manifest';
+import type { RpcCaller } from '@tailor-cms/cek-common';
 import { uniqueId } from 'lodash-es';
 import { UpChunk } from '@mux/upchunk';
 
@@ -80,9 +80,9 @@ const extensions = ['.mp4', '.mov', '.avi', '.mkv'];
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const props = defineProps<{ element: Element }>();
-const emit = defineEmits(['save']);
+const emit = defineEmits<{ save: [data: ElementData] }>();
 
-const callElementAction = inject('$callElementAction') as CallElementAction;
+const rpc = inject('$rpc') as RpcCaller;
 
 const fileInput = useTemplateRef<HTMLInputElement>('fileInput');
 const progress = ref(0);
@@ -95,7 +95,7 @@ const fileName = computed(() => props.element.data.fileName ?? '');
 
 const waitForAsset = async (uploadId: string) => {
   for (let attempt = 0; attempt < MAX_POLL_ATTEMPTS; attempt++) {
-    const result = await callElementAction<{
+    const result = await rpc<{
       status: string;
       assetId?: string;
       playbackId?: string;
@@ -108,7 +108,7 @@ const waitForAsset = async (uploadId: string) => {
 
 const uploadVideo = async (file: File) => {
   loading.value = true;
-  const { id: uploadId, url } = await callElementAction<{
+  const { id: uploadId, url } = await rpc<{
     id: string;
     url: string;
     status: string;
@@ -160,7 +160,8 @@ const cancelUpload = () => {
 };
 
 const remove = async () => {
-  await callElementAction('removeVideo');
+  const { assetId } = props.element.data;
+  await rpc('removeVideo', { assetId });
   emit('save', {
     ...props.element.data,
     token: undefined,

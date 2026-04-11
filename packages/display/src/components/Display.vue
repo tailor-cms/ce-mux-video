@@ -43,7 +43,7 @@ import { throttle } from 'lodash-es';
 const PROGRESS_UPDATE_INTERVAL = 5000;
 
 const props = defineProps<{ element: Element; userState: any }>();
-const emit = defineEmits(['interaction']);
+const emit = defineEmits<{ interaction: [data: any] }>();
 
 const video = useTemplateRef<HTMLVideoElement>('video');
 

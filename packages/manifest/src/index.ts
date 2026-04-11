@@ -21,6 +21,17 @@ export const initState: DataInitializer = (): ElementData => ({
 // Can be loaded from package.json
 export const version = '1.0';
 
+export const isEmpty = (data: ElementData): boolean => !data.playbackId;
+
+export const mocks: {
+  displayContexts: Array<{ name: string; data: any }>;
+} = {
+  displayContexts: [
+    { name: 'Default', data: {} },
+    { name: 'Has interacted', data: { interactionTimestamp: Date.now() } },
+  ],
+};
+
 // UI configuration for Tailor CMS
 const ui = {
   // Display icon, https://pictogrammers.com/library/mdi/
@@ -36,6 +47,7 @@ const manifest: ElementManifest = {
   name,
   ssr: false,
   initState,
+  isEmpty,
   ui,
 };
 

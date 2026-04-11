@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/no-undef-components -->
 <template>
   <div class="tce-mux-video">
-    <ElementPlaceholder
+    <TailorElementPlaceholder
       v-if="!element.data.playbackId"
       :icon="manifest.ui.icon"
       :is-disabled="isReadonly"
@@ -22,11 +22,10 @@
 
 <script lang="ts" setup>
 import '@mux/mux-player';
-import { defineEmits, defineProps } from 'vue';
-import manifest, { Element } from '@tailor-cms/ce-mux-video-manifest';
-import { ElementPlaceholder } from '@tailor-cms/core-components';
+import type { Element, ElementData } from '@tailor-cms/ce-mux-video-manifest';
+import manifest from '@tailor-cms/ce-mux-video-manifest';
 
-defineEmits(['save']);
+defineEmits<{ save: [data: ElementData] }>();
 defineProps<{
   element: Element;
   isDragged: boolean;

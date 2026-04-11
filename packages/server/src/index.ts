@@ -1,8 +1,10 @@
 import type {
   BeforeDisplayHook,
-  CallHandler,
   ElementHook,
+  HookMap,
   OnUserInteractionHook,
+  ProcedureHandler,
+  ServerModule,
 } from '@tailor-cms/cek-common';
 import { initState, type } from '@tailor-cms/ce-mux-video-manifest';
 import type { Element } from '@tailor-cms/ce-mux-video-manifest';
@@ -23,7 +25,10 @@ export const afterLoaded: ElementHook<Element> = async (element, services) => {
   return element;
 };
 
-export const beforeDisplay: BeforeDisplayHook<Element> = (_element, context) => {
+export const beforeDisplay: BeforeDisplayHook<Element> = (
+  _element,
+  context,
+) => {
   console.log('beforeDisplay hook');
   console.log('beforeDisplay context', context);
   return { ...context, ...USER_STATE };
@@ -48,29 +53,26 @@ export const onUserInteraction: OnUserInteractionHook<Element> = (
   return { updateDisplayState: true };
 };
 
-const createUpload: CallHandler<Element> = async (_element, services) => {
+const createUpload: ProcedureHandler = async (services) => {
   const service = MuxService.get(services.config.tce);
   return service.createUpload();
 };
 
-const resolveAsset: CallHandler<Element, { uploadId: string }> = async (
-  _element,
-  services,
-  payload,
-) => {
+const resolveAsset: ProcedureHandler = async (services, payload) => {
   const service = MuxService.get(services.config.tce);
   const { uploadId } = payload;
   if (!uploadId) throw new Error('No upload to resolve');
   return service.resolveUpload(uploadId);
 };
 
-const removeVideo: CallHandler<Element> = async (element, services) => {
+const removeVideo: ProcedureHandler = async (services, payload) => {
   const service = MuxService.get(services.config.tce);
-  const { assetId } = element.data;
+  const { assetId } = payload;
+  if (!assetId) throw new Error('No asset to remove');
   if (assetId) await service.removeAsset(assetId);
 };
 
-export const hookMap = new Map(
+export const hookMap: HookMap<Element> = new Map(
   Object.entries({
     afterLoaded,
     onUserInteraction,
@@ -78,16 +80,22 @@ export const hookMap = new Map(
   }),
 );
 
-export const call = { createUpload, resolveAsset, removeVideo };
+export const procedures: Record<string, ProcedureHandler> = {
+  createUpload,
+  resolveAsset,
+  removeVideo,
+};
 
-export default {
+const serverModule: ServerModule<Element> = {
   type,
-  hookMap,
   initState,
-  call,
+  hookMap,
+  procedures,
   afterLoaded,
   onUserInteraction,
   beforeDisplay,
 };
+
+export default serverModule;
 
 export { type, initState };
