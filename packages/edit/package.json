@@ -27,13 +27,13 @@
   "dependencies": {
     "@mux/mux-player": "^3.5.1",
     "@mux/upchunk": "^3.5.0",
-    "@tailor-cms/cek-common": "^2.0.0-beta.5",
+    "@tailor-cms/cek-common": "^2.0.0-beta.6",
     "lodash-es": "^4.17.21",
     "srt-webvtt": "^2.0.0"
   },
   "devDependencies": {
     "@tailor-cms/ce-mux-video-manifest": "workspace:*",
-    "@tailor-cms/eslint-config": "^2.0.0-beta.5",
+    "@tailor-cms/eslint-config": "^2.0.0-beta.6",
     "@types/lodash-es": "^4.17.12",
     "@vitejs/plugin-vue": "^6.0.5",
     "typescript": "^6.0.2",

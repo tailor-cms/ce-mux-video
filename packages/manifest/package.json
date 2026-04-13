@@ -31,12 +31,12 @@
     "prepublish": "pnpm build"
   },
   "devDependencies": {
-    "@tailor-cms/eslint-config": "^2.0.0-beta.5",
+    "@tailor-cms/eslint-config": "^2.0.0-beta.6",
     "tsdown": "^0.21.7",
     "typescript": "^6.0.2"
   },
   "dependencies": {
-    "@tailor-cms/cek-common": "^2.0.0-beta.5"
+    "@tailor-cms/cek-common": "^2.0.0-beta.6"
   },
   "tsdown": {
     "target": "node22",

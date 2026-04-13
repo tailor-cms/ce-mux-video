@@ -33,13 +33,13 @@
   "dependencies": {
     "@mux/mux-node": "^12.1.0",
     "@tailor-cms/ce-mux-video-manifest": "workspace:*",
-    "@tailor-cms/cek-common": "^2.0.0-beta.5",
+    "@tailor-cms/cek-common": "^2.0.0-beta.6",
     "lodash-es": "^4.17.21",
     "sequelize": "^6.37.7",
     "yup": "^1.7.1"
   },
   "devDependencies": {
-    "@tailor-cms/eslint-config": "^2.0.0-beta.5",
+    "@tailor-cms/eslint-config": "^2.0.0-beta.6",
     "@types/lodash-es": "^4.17.12",
     "tsdown": "^0.21.7",
     "typescript": "^6.0.2"
