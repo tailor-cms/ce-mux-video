@@ -1,6 +1,5 @@
 import { object, string } from 'yup';
 import { Mux } from '@mux/mux-node';
-import { pick } from 'lodash-es';
 
 const schema = object({
   muxTokenId: string().required(),
@@ -34,32 +33,45 @@ export default class MuxService {
     this.jwt = jwt;
   }
 
-  static get(config: MuxServiceConfig) {
+  static get(config: MuxServiceConfig): MuxService {
     if (!MuxService.instance) MuxService.instance = new MuxService(config);
     return MuxService.instance;
   }
 
-  async createUpload() {
+  async ingestFromUrl(url: string): Promise<{ assetId: string }> {
+    const asset = await this.api.assets.create({
+      inputs: [{ url }],
+      playback_policies: ['signed'],
+    });
+    return { assetId: asset.id };
+  }
+
+  async createUpload(): Promise<{ id: string; url: string }> {
     const upload = await this.api.uploads.create({
       cors_origin: '*',
       new_asset_settings: { playback_policies: ['signed'] },
     });
-    return pick(upload, ['id', 'url', 'status']);
+    return { id: upload.id, url: upload.url };
   }
 
-  async getUpload(uploadId: string) {
+  async resolveUpload(
+    uploadId: string,
+  ): Promise<
+    | { status: 'ready'; assetId: string; playbackId: string }
+    | { status: string }
+  > {
     const upload = await this.api.uploads.retrieve(uploadId);
-    return pick(upload, ['id', 'status', 'asset_id']);
+    if (!upload.asset_id) return { status: 'waiting' };
+    return this.resolveAsset(upload.asset_id);
   }
 
-  getAsset(assetId: string) {
-    return this.api.assets.retrieve(assetId);
-  }
-
-  async resolveUpload(uploadId: string) {
-    const { asset_id: assetId } = await this.getUpload(uploadId);
-    if (!assetId) return { status: 'waiting' as const };
-    const asset = await this.getAsset(assetId);
+  async resolveAsset(
+    assetId: string,
+  ): Promise<
+    | { status: 'ready'; assetId: string; playbackId: string }
+    | { status: string }
+  > {
+    const asset = await this.api.assets.retrieve(assetId);
     if (asset.status === 'errored') throw new Error('Asset processing failed');
     if (asset.status === 'ready') {
       const playbackId = asset.playback_ids[0].id;
@@ -68,7 +80,9 @@ export default class MuxService {
     return { status: asset.status };
   }
 
-  async getTokens(playbackId: string) {
+  async getTokens(
+    playbackId: string,
+  ): Promise<{ token: string; thumbnailToken: string }> {
     const token = await this.jwt.signPlaybackId(playbackId, {
       expiration: '7d',
     });
@@ -79,7 +93,7 @@ export default class MuxService {
     return { token, thumbnailToken };
   }
 
-  removeAsset(assetId: string) {
+  removeAsset(assetId: string): Promise<void> {
     return this.api.assets.delete(assetId);
   }
 }

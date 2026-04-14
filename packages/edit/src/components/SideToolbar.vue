@@ -33,7 +33,6 @@
 import { computed, inject } from 'vue';
 import type { Element, ElementData } from '@tailor-cms/ce-mux-video-manifest';
 import type { InputFileEvent } from '@tailor-cms/cek-common';
-import { last } from 'lodash-es';
 import toWebVTT from 'srt-webvtt';
 
 const props = defineProps<{ element: Element }>();
@@ -45,7 +44,7 @@ const transcript = computed(() => props.element.data.transcript);
 const captions = computed(() => props.element.data.captions);
 
 const getFileName = (url?: string | null): File[] | undefined => {
-  if (url) return [new File([], last(url.split('___')) || 'file')];
+  if (url) return [new File([], url.split('___').pop() || 'file')];
 };
 
 const saveData = (updates: Partial<Element['data']>) => {
@@ -53,9 +52,9 @@ const saveData = (updates: Partial<Element['data']>) => {
 };
 
 const uploadTranscript = async (e: InputFileEvent) => {
-  const files = Array.from(e.target.files || []);
-  if (!files.length) return;
-  const { url } = await $storageService.upload(files);
+  const [file] = Array.from(e.target.files || []);
+  if (!file) return;
+  const { url } = await $storageService.upload(file);
   const assets = { ...props.element.data.assets, transcript: url };
   saveData({ assets });
 };
@@ -74,7 +73,7 @@ const uploadCaptions = async (e: InputFileEvent) => {
   if (!file) return;
   const isSRT = file.name.toLowerCase().endsWith('.srt');
   const uploadFile = isSRT ? await convertSrtToVtt(file) : file;
-  const { url } = await $storageService.upload([uploadFile]);
+  const { url } = await $storageService.upload(uploadFile);
   const assets = { ...props.element.data.assets, captions: url };
   saveData({ assets });
 };

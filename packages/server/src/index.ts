@@ -8,6 +8,7 @@ import type {
 } from '@tailor-cms/cek-common';
 import { initState, type } from '@tailor-cms/ce-mux-video-manifest';
 import type { Element } from '@tailor-cms/ce-mux-video-manifest';
+import isLocalhost from 'is-localhost-ip';
 
 import MuxService from './mux';
 
@@ -53,23 +54,33 @@ export const onUserInteraction: OnUserInteractionHook<Element> = (
   return { updateDisplayState: true };
 };
 
-const createUpload: ProcedureHandler = async (services) => {
+const prepareVideo: ProcedureHandler = async (services, payload) => {
+  const { storageKey } = payload;
+  if (!storageKey) throw new Error('No storage key provided');
   const service = MuxService.get(services.config.tce);
-  return service.createUpload();
+  const storageUrl = await services.storage.getFileUrl(storageKey);
+  const directUpload = await isLocalhost(new URL(storageUrl).hostname);
+  if (directUpload) {
+    const { id, url } = await service.createUpload();
+    return { mode: 'upload' as const, uploadId: id, uploadUrl: url };
+  }
+  const { assetId } = await service.ingestFromUrl(storageUrl);
+  return { mode: 'ingest' as const, assetId };
 };
 
 const resolveAsset: ProcedureHandler = async (services, payload) => {
   const service = MuxService.get(services.config.tce);
-  const { uploadId } = payload;
-  if (!uploadId) throw new Error('No upload to resolve');
-  return service.resolveUpload(uploadId);
+  const { assetId, uploadId } = payload;
+  if (uploadId) return service.resolveUpload(uploadId);
+  if (!assetId) throw new Error('No asset or upload ID provided');
+  return service.resolveAsset(assetId);
 };
 
 const removeVideo: ProcedureHandler = async (services, payload) => {
   const service = MuxService.get(services.config.tce);
   const { assetId } = payload;
-  if (!assetId) throw new Error('No asset to remove');
-  if (assetId) await service.removeAsset(assetId);
+  if (!assetId) throw new Error('No asset ID provided');
+  await service.removeAsset(assetId);
 };
 
 export const hookMap: HookMap<Element> = new Map(
@@ -81,7 +92,7 @@ export const hookMap: HookMap<Element> = new Map(
 );
 
 export const procedures: Record<string, ProcedureHandler> = {
-  createUpload,
+  prepareVideo,
   resolveAsset,
   removeVideo,
 };

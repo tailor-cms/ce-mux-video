@@ -90,9 +90,6 @@ importers:
       '@tailor-cms/cek-common':
         specifier: ^2.0.0-beta.6
         version: 2.0.0-beta.6
-      lodash-es:
-        specifier: ^4.17.21
-        version: 4.17.21
       srt-webvtt:
         specifier: ^2.0.0
         version: 2.0.0
@@ -106,9 +103,6 @@ importers:
       '@tailor-cms/eslint-config':
         specifier: ^2.0.0-beta.6
         version: 2.0.0-beta.6(@stylistic/eslint-plugin@2.11.0(eslint@9.39.4)(typescript@6.0.2))(@typescript-eslint/parser@8.58.1(eslint@9.39.4)(typescript@6.0.2))(eslint@9.39.4)(globals@17.4.0)(prettier@3.6.2)(typescript@6.0.2)
-      '@types/lodash-es':
-        specifier: ^4.17.12
-        version: 4.17.12
       '@vitejs/plugin-vue':
         specifier: ^6.0.5
         version: 6.0.5(vite@8.0.8(@types/node@24.0.12)(esbuild@0.27.7)(sass@1.99.0)(tsx@4.21.0))(vue@3.5.32(typescript@6.0.2))
@@ -155,9 +149,9 @@ importers:
       '@tailor-cms/cek-common':
         specifier: ^2.0.0-beta.6
         version: 2.0.0-beta.6
-      lodash-es:
-        specifier: ^4.17.21
-        version: 4.17.21
+      is-localhost-ip:
+        specifier: ^3.0.1
+        version: 3.0.1
       sequelize:
         specifier: ^6.37.7
         version: 6.37.7
@@ -168,9 +162,6 @@ importers:
       '@tailor-cms/eslint-config':
         specifier: ^2.0.0-beta.6
         version: 2.0.0-beta.6(@stylistic/eslint-plugin@2.11.0(eslint@9.39.4)(typescript@6.0.2))(@typescript-eslint/parser@8.58.1(eslint@9.39.4)(typescript@6.0.2))(eslint@9.39.4)(globals@17.4.0)(prettier@3.6.2)(typescript@6.0.2)
-      '@types/lodash-es':
-        specifier: ^4.17.12
-        version: 4.17.12
       tsdown:
         specifier: ^0.21.7
         version: 0.21.7(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(synckit@0.11.12)(typescript@6.0.2)(vue-tsc@3.2.6(typescript@6.0.2))
@@ -2319,6 +2310,10 @@ packages:
     engines: {node: '>=14.16'}
     hasBin: true
 
+  is-localhost-ip@3.0.1:
+    resolution: {integrity: sha512-OwNA8bw72L/gDVfCrhJ3GFb3AGp+I7t+cvJaQGkiLZgeBAZmAygIduAdhLq56JycuJ68NCICxA2yyIaAtbR9Kg==}
+    engines: {node: '>=18'}
+
   is-map@2.0.3:
     resolution: {integrity: sha512-1Qed0/Hr2m+YqxnM09CjA2d/i6YZNfF6R2oRAOj36eUdS6qIV/huPJNSEpKbupewFs+ZsJlxsjjPbc0/afW6Lw==}
     engines: {node: '>= 0.4'}
@@ -2655,8 +2650,11 @@ packages:
     resolution: {integrity: sha512-z0yWI+4FDrrweS8Zmt4Ej5HdJmky15+L2e6Wgn3+iK5fWzb6T3fhNFq2+MeTRb064c6Wr4N/wv0DzQTjNzHNGQ==}
     engines: {node: '>=10'}
 
-  min-document@2.19.0:
-    resolution: {integrity: sha512-9Wy1B3m3f66bPPmU5hdA4DR4PB2OfDU/+GS3yAB7IQozE3tqXaVv2zOjgla7MEGSRv95+ILmOuvhLkOK6wJtCQ==}
+  min-document@2.19.2:
+    resolution: {integrity: sha512-8S5I8db/uZN8r9HSLFVWPdJCvYOejMcEC82VIzNUc6Zkklf/d1gg2psfE79/vyhWOj4+J8MtwmoOz3TmvaGu5A==}
+
+  srt-webvtt@2.0.0:
+    resolution: {integrity: sha512-G2Z7/Jf2NRKrmLYNSIhSYZZYE6OFlKXFp9Au2/zJBKgrioUzmrAys1x7GT01dwl6d2sEnqr5uahEIOd0JW/Rbw==}
 
   minimatch@10.2.5:
     resolution: {integrity: sha512-MULkVLfKGYDFYejP07QOurDLLQpcjk7Fw+7jXS2R2czRQzR56yHRveU5NDJEOviH+hETZKSkIk5c+T23GjFUMg==}
@@ -3441,9 +3439,6 @@ packages:
   sqlite3@6.0.1:
     resolution: {integrity: sha512-X0czUUMG2tmSqJpEQa3tCuZSHKIx8PwM53vLZzKp/o6Rpy25fiVfjdbnZ988M8+O3ZWR1ih0K255VumCb3MAnQ==}
     engines: {node: '>=20.17.0'}
-
-  srt-webvtt@2.0.0:
-    resolution: {integrity: sha512-G2Z7/Jf2NRKrmLYNSIhSYZZYE6OFlKXFp9Au2/zJBKgrioUzmrAys1x7GT01dwl6d2sEnqr5uahEIOd0JW/Rbw==}
 
   ssri@13.0.1:
     resolution: {integrity: sha512-QUiRf1+u9wPTL/76GTYlKttDEBWV1ga9ZXW8BG6kfdeyyM8LGPix9gROyg9V2+P0xNyF3X2Go526xKFdMZrHSQ==}
@@ -6243,7 +6238,7 @@ snapshots:
 
   global@4.4.0:
     dependencies:
-      min-document: 2.19.0
+      min-document: 2.19.2
       process: 0.11.10
 
   globals@14.0.0: {}
@@ -6471,6 +6466,8 @@ snapshots:
   is-inside-container@1.0.0:
     dependencies:
       is-docker: 3.0.0
+
+  is-localhost-ip@3.0.1: {}
 
   is-map@2.0.3: {}
 
@@ -6762,9 +6759,11 @@ snapshots:
 
   mimic-response@3.1.0: {}
 
-  min-document@2.19.0:
+  min-document@2.19.2:
     dependencies:
       dom-walk: 0.1.2
+
+  srt-webvtt@2.0.0: {}
 
   minimatch@10.2.5:
     dependencies:
@@ -7595,8 +7594,6 @@ snapshots:
       node-gyp: 12.2.0
     transitivePeerDependencies:
       - supports-color
-
-  srt-webvtt@2.0.0: {}
 
   ssri@13.0.1:
     dependencies:
