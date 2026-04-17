@@ -1,3 +1,5 @@
+import type { ElementMocks } from '@tailor-cms/cek-common';
+
 import type {
   DataInitializer,
   ElementData,
@@ -23,9 +25,7 @@ export const version = '1.0';
 
 export const isEmpty = (data: ElementData): boolean => !data.playbackId;
 
-export const mocks: {
-  displayContexts: Array<{ name: string; data: any }>;
-} = {
+export const mocks: ElementMocks = {
   displayContexts: [
     { name: 'Default', data: {} },
     { name: 'Has interacted', data: { interactionTimestamp: Date.now() } },

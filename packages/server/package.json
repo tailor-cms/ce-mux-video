@@ -44,7 +44,7 @@
     "typescript": "^6.0.2"
   },
   "tsdown": {
-    "target": "node22",
+    "target": "node24",
     "format": ["cjs", "esm"]
   },
   "publishConfig": {

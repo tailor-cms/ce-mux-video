@@ -39,7 +39,7 @@
     "@tailor-cms/cek-common": "^2.0.0-beta.10"
   },
   "tsdown": {
-    "target": "node22",
+    "target": "node24",
     "format": ["cjs", "esm"]
   },
   "publishConfig": {
