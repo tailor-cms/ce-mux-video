@@ -2,7 +2,7 @@ import type * as common from '@tailor-cms/cek-common';
 
 export interface ElementData extends common.ElementConfig {
   assets: { transcript?: string; captions?: string };
-  storageKey?: string;
+  fileKey?: string;
   fileName?: string;
   assetId?: string;
   playbackId?: string;

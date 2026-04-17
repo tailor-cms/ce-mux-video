@@ -1,15 +1,5 @@
 <template>
   <div class="d-flex align-center justify-center ga-2">
-    <!-- <template v-if="element.data.playbackId">
-      <VBtn color="red" icon="mdi-delete" @click="remove" />
-      <VTextField
-        :model-value="fileName"
-        hide-details="auto"
-        min-width="350"
-        variant="outlined"
-        disabled
-      />
-    </template> -->
     <template v-if="error">
       <span class="text-error text-label-medium text-uppercase">
         {{ error }}
@@ -42,7 +32,7 @@
     <TailorFileInput
       v-else
       :allowed-extensions="EXTENSIONS"
-      :file-key="element.data.storageKey"
+      :file-key="element.data.fileKey"
       label="Video"
       @input="onVideoFile"
       @upload="onVideoFile"
@@ -51,8 +41,8 @@
 </template>
 
 <script setup lang="ts">
-import { inject, ref } from 'vue';
 import type { Element, ElementData } from '@tailor-cms/ce-mux-video-manifest';
+import { inject, ref } from 'vue';
 import type { RpcCaller } from '@tailor-cms/cek-common';
 import { UpChunk } from '@mux/upchunk';
 
@@ -131,7 +121,7 @@ const onVideoFile = async (value: Record<string, any> | null) => {
   error.value = '';
   try {
     const result = await rpc<PrepareResult>('prepareVideo', {
-      storageKey: value.key,
+      fileKey: value.key,
     });
     let pollParams: { assetId?: string; uploadId?: string };
     if (result.mode === 'ingest') {
@@ -146,7 +136,7 @@ const onVideoFile = async (value: Record<string, any> | null) => {
     const { assetId, playbackId } = await waitForAsset(pollParams);
     emit('save', {
       ...props.element.data,
-      storageKey: value.key,
+      fileKey: value.key,
       fileName: value.name || value.key.split('/').pop(),
       assetId,
       playbackId,
@@ -165,7 +155,7 @@ const remove = async () => {
   await rpc('removeVideo', { assetId });
   emit('save', {
     ...props.element.data,
-    storageKey: undefined,
+    fileKey: undefined,
     token: undefined,
     thumbnailToken: undefined,
     fileName: undefined,

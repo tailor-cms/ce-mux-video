@@ -12,7 +12,8 @@
     "declaration": true,
     "noEmit": true,
     "outDir": "dist",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": ["node"]
   },
   "include": ["src/**/*.ts"]
 }

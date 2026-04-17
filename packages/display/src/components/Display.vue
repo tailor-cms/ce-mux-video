@@ -55,7 +55,12 @@ const handleTimeUpdate = throttle(interact, PROGRESS_UPDATE_INTERVAL);
 
 onMounted(() => {
   const currentTime = props.userState?.currentTime;
-  if (currentTime && video.value) video.value.currentTime = currentTime;
+  if (!currentTime || !video.value) return;
+  video.value.addEventListener(
+    'loadedmetadata',
+    () => (video.value!.currentTime = currentTime),
+    { once: true },
+  );
 });
 </script>
 

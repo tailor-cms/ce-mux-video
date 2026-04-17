@@ -37,50 +37,12 @@ export const beforeDisplay: BeforeDisplayHook<Element> = (
 
 export const onUserInteraction: OnUserInteractionHook<Element> = (
   _element,
-  context,
+  _context,
   payload,
 ) => {
-  console.log('onUserInteraction', context, payload);
-  // Simulate user state update within CEK
-  if (IS_CEK) {
-    // Only for showcase purposes
-    USER_STATE.interactionTimestamp = new Date().getTime();
-    // Can be reset to initial / mocked state via UI
-    context.contextTimestamp = USER_STATE.interactionTimestamp;
-    Object.assign(USER_STATE, payload);
-  }
-  // Can have arbitrary return value (interpreted by target system)
-  // FE is updated if updateDisplayState is true
-  return { updateDisplayState: true };
-};
-
-const prepareVideo: ProcedureHandler = async (services, payload) => {
-  const { storageKey } = payload;
-  if (!storageKey) throw new Error('No storage key provided');
-  const service = MuxService.get(services.config.tce);
-  const storageUrl = await services.storage.getFileUrl(storageKey);
-  const directUpload = await isLocalhost(new URL(storageUrl).hostname);
-  if (directUpload) {
-    const { id, url } = await service.createUpload();
-    return { mode: 'upload' as const, uploadId: id, uploadUrl: url };
-  }
-  const { assetId } = await service.ingestFromUrl(storageUrl);
-  return { mode: 'ingest' as const, assetId };
-};
-
-const resolveAsset: ProcedureHandler = async (services, payload) => {
-  const service = MuxService.get(services.config.tce);
-  const { assetId, uploadId } = payload;
-  if (uploadId) return service.resolveUpload(uploadId);
-  if (!assetId) throw new Error('No asset or upload ID provided');
-  return service.resolveAsset(assetId);
-};
-
-const removeVideo: ProcedureHandler = async (services, payload) => {
-  const service = MuxService.get(services.config.tce);
-  const { assetId } = payload;
-  if (!assetId) throw new Error('No asset ID provided');
-  await service.removeAsset(assetId);
+  const { currentTime } = payload;
+  if (IS_CEK) USER_STATE.currentTime = currentTime;
+  return { currentTime };
 };
 
 export const hookMap: HookMap<Element> = new Map(
@@ -92,9 +54,31 @@ export const hookMap: HookMap<Element> = new Map(
 );
 
 export const procedures: Record<string, ProcedureHandler> = {
-  prepareVideo,
-  resolveAsset,
-  removeVideo,
+  prepareVideo: async (services, { fileKey }) => {
+    if (!fileKey) throw new Error('No file key provided');
+    const service = MuxService.get(services.config.tce);
+    const storageUrl = await services.storage.getFileUrl(fileKey);
+    const directUpload = await isLocalhost(new URL(storageUrl).hostname);
+    if (directUpload) {
+      const { id, url } = await service.createUpload();
+      return { mode: 'upload' as const, uploadId: id, uploadUrl: url };
+    }
+    const { assetId } = await service.ingestFromUrl(storageUrl);
+    return { mode: 'ingest' as const, assetId };
+  },
+  resolveAsset: async (services, payload) => {
+    const { assetId, uploadId } = payload;
+    const service = MuxService.get(services.config.tce);
+    if (uploadId) return service.resolveUpload(uploadId);
+    if (!assetId) throw new Error('No asset or upload ID provided');
+    return service.resolveAsset(assetId);
+  },
+  removeVideo: async (services, payload) => {
+    const service = MuxService.get(services.config.tce);
+    const { assetId } = payload;
+    if (!assetId) throw new Error('No asset ID provided');
+    await service.removeAsset(assetId);
+  },
 };
 
 const serverModule: ServerModule<Element> = {
