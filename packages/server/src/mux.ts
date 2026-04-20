@@ -1,5 +1,12 @@
 import { object, string } from 'yup';
+import isLocalhost from 'is-localhost-ip';
 import { Mux } from '@mux/mux-node';
+
+import type {
+  PrepareVideoResult,
+  ResolveAssetResult,
+  VideoService,
+} from './video-service';
 
 const schema = object({
   muxTokenId: string().required(),
@@ -8,15 +15,15 @@ const schema = object({
   muxJwtPrivateKey: string().required(),
 });
 
-interface MuxServiceConfig {
+export interface MuxServiceConfig {
   muxTokenId: string;
   muxTokenSecret: string;
   muxJwtSigningKey: string;
   muxJwtPrivateKey: string;
 }
 
-export default class MuxService {
-  private static instance: MuxService;
+export default class MuxVideoService implements VideoService {
+  private static instance: MuxVideoService;
 
   api: Mux.Video;
   jwt: Mux.Jwt;
@@ -33,9 +40,20 @@ export default class MuxService {
     this.jwt = jwt;
   }
 
-  static get(config: MuxServiceConfig): MuxService {
-    if (!MuxService.instance) MuxService.instance = new MuxService(config);
-    return MuxService.instance;
+  static get(config: MuxServiceConfig): MuxVideoService {
+    if (!MuxVideoService.instance)
+      MuxVideoService.instance = new MuxVideoService(config);
+    return MuxVideoService.instance;
+  }
+
+  async prepareVideo(storageUrl: string): Promise<PrepareVideoResult> {
+    const directUpload = await isLocalhost(new URL(storageUrl).hostname);
+    if (directUpload) {
+      const { id, url } = await this.createUpload();
+      return { mode: 'upload', uploadId: id, uploadUrl: url };
+    }
+    const { assetId } = await this.ingestFromUrl(storageUrl);
+    return { mode: 'ingest', assetId };
   }
 
   async ingestFromUrl(url: string): Promise<{ assetId: string }> {
@@ -54,23 +72,24 @@ export default class MuxService {
     return { id: upload.id, url: upload.url };
   }
 
-  async resolveUpload(
+  private async resolveAssetFromUpload(
     uploadId: string,
-  ): Promise<
-    | { status: 'ready'; assetId: string; playbackId: string }
-    | { status: string }
-  > {
+  ): Promise<ResolveAssetResult> {
     const upload = await this.api.uploads.retrieve(uploadId);
     if (!upload.asset_id) return { status: 'waiting' };
-    return this.resolveAsset(upload.asset_id);
+    return this.resolveAssetById(upload.asset_id);
   }
 
-  async resolveAsset(
-    assetId: string,
-  ): Promise<
-    | { status: 'ready'; assetId: string; playbackId: string }
-    | { status: string }
-  > {
+  async resolveAsset(input: {
+    assetId?: string;
+    uploadId?: string;
+  }): Promise<ResolveAssetResult> {
+    if (input.uploadId) return this.resolveAssetFromUpload(input.uploadId);
+    if (!input.assetId) throw new Error('No asset or upload ID provided');
+    return this.resolveAssetById(input.assetId);
+  }
+
+  private async resolveAssetById(assetId: string): Promise<ResolveAssetResult> {
     const asset = await this.api.assets.retrieve(assetId);
     if (asset.status === 'errored') throw new Error('Asset processing failed');
     if (asset.status === 'ready') {
@@ -93,7 +112,7 @@ export default class MuxService {
     return { token, thumbnailToken };
   }
 
-  removeAsset(assetId: string): Promise<void> {
+  removeVideo(assetId: string): Promise<void> {
     return this.api.assets.delete(assetId);
   }
 }

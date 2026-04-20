@@ -8,9 +8,8 @@ import type {
 } from '@tailor-cms/cek-common';
 import { initState, mocks, type } from '@tailor-cms/ce-mux-video-manifest';
 import type { Element } from '@tailor-cms/ce-mux-video-manifest';
-import isLocalhost from 'is-localhost-ip';
 
-import MuxService from './mux';
+import { getVideoService } from './video-service';
 
 // Detect if hooks are running in CEK (used for mocking end-system runtime)
 const IS_CEK = process.env.CEK_RUNTIME;
@@ -20,7 +19,7 @@ const USER_STATE: any = {};
 export const afterLoaded: ElementHook<Element> = async (element, services) => {
   const { playbackId } = element.data;
   if (!playbackId) return element;
-  const service = MuxService.get(services.config.tce);
+  const service = getVideoService(services.config.tce);
   const { token, thumbnailToken } = await service.getTokens(playbackId);
   element.data = { ...element.data, token, thumbnailToken };
   return element;
@@ -56,28 +55,18 @@ export const hookMap: HookMap<Element> = new Map(
 export const procedures: Record<string, ProcedureHandler> = {
   prepareVideo: async (services, { fileKey }) => {
     if (!fileKey) throw new Error('No file key provided');
-    const service = MuxService.get(services.config.tce);
+    const service = getVideoService(services.config.tce);
     const storageUrl = await services.storage.getFileUrl(fileKey);
-    const directUpload = await isLocalhost(new URL(storageUrl).hostname);
-    if (directUpload) {
-      const { id, url } = await service.createUpload();
-      return { mode: 'upload' as const, uploadId: id, uploadUrl: url };
-    }
-    const { assetId } = await service.ingestFromUrl(storageUrl);
-    return { mode: 'ingest' as const, assetId };
+    return service.prepareVideo(storageUrl);
   },
   resolveAsset: async (services, payload) => {
-    const { assetId, uploadId } = payload;
-    const service = MuxService.get(services.config.tce);
-    if (uploadId) return service.resolveUpload(uploadId);
-    if (!assetId) throw new Error('No asset or upload ID provided');
-    return service.resolveAsset(assetId);
+    const service = getVideoService(services.config.tce);
+    return service.resolveAsset(payload);
   },
   removeVideo: async (services, payload) => {
-    const service = MuxService.get(services.config.tce);
     const { assetId } = payload;
     if (!assetId) throw new Error('No asset ID provided');
-    await service.removeAsset(assetId);
+    await getVideoService(services.config.tce).removeVideo(assetId);
   },
 };
 
