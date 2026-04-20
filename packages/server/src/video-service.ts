@@ -36,5 +36,11 @@ export const getVideoService = (
   config?: Partial<MuxServiceConfig>,
 ): VideoService => {
   if (hasMuxConfig(config)) return MuxVideoService.get(config);
-  return mockVideoService;
+  if (process.env.CEK_RUNTIME) return mockVideoService;
+  throw new Error(`Mux config missing, set:
+    - TCE_MUX_TOKEN_ID,
+    - TCE_MUX_TOKEN_SECRET,
+    - TCE_MUX_JWT_SIGNING_KEY,
+    - TCE_MUX_JWT_PRIVATE_KEY
+  `);
 };

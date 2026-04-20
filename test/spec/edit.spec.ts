@@ -12,14 +12,14 @@ test.beforeEach(async ({ page }) => {
   await page.waitForLoadState('networkidle');
 });
 
-test.describe('When video is not set', () => {
-  test('Shows placeholder', async ({ page }) => {
+test.describe('Video', () => {
+  test('Shows placeholder when empty', async ({ page }) => {
     const edit = new Edit(page);
     await expect(edit.placeholder).toBeVisible();
     await expect(edit.player).not.toBeVisible();
   });
 
-  test('Upload dialog lists accepted video extensions', async ({ page }) => {
+  test('Upload dialog lists accepted extensions', async ({ page }) => {
     const edit = new Edit(page);
     await edit.focus();
     await edit.videoFileInput.open();
@@ -30,9 +30,7 @@ test.describe('When video is not set', () => {
     expect(accept).toContain('.mkv');
     await edit.videoFileInput.cancel();
   });
-});
 
-test.describe('When video is set', () => {
   test('Uploads and persists player across reload', async ({ page }) => {
     const edit = new Edit(page);
     await edit.focus();
@@ -47,6 +45,22 @@ test.describe('When video is set', () => {
     await page.reload({ waitUntil: 'networkidle' });
     await expect(edit.player).toBeVisible();
     await expect(edit.placeholder).not.toBeVisible();
+  });
+
+  test('Can remove uploaded video', async ({ page }) => {
+    await elementClient.update(ELEMENT_ID, {
+      playbackId: 'mock-playback-test',
+      assetId: 'mock-asset-test',
+      fileKey: 'mock/key',
+      assets: {},
+    });
+    await page.reload({ waitUntil: 'networkidle' });
+    const edit = new Edit(page);
+    await expect(edit.player).toBeVisible();
+    await edit.focus();
+    await edit.videoFileInput.remove();
+    await expect(edit.placeholder).toBeVisible();
+    await expect(edit.player).not.toBeVisible();
   });
 });
 
