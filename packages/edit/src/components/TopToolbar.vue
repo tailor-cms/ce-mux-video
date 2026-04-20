@@ -152,16 +152,19 @@ const onVideoFile = async (value: Record<string, any> | null) => {
 
 const remove = async () => {
   const { assetId } = props.element.data;
-  await rpc('removeVideo', { assetId });
-  emit('save', {
-    ...props.element.data,
-    fileKey: undefined,
-    token: undefined,
-    thumbnailToken: undefined,
-    fileName: undefined,
-    playbackId: undefined,
-    assetId: undefined,
-  });
+  try {
+    if (assetId) await rpc('removeVideo', { assetId });
+  } finally {
+    emit('save', {
+      ...props.element.data,
+      fileKey: undefined,
+      token: undefined,
+      thumbnailToken: undefined,
+      fileName: undefined,
+      playbackId: undefined,
+      assetId: undefined,
+    });
+  }
 };
 </script>
 
