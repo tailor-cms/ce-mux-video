@@ -6,7 +6,7 @@ import type {
   ProcedureHandler,
   ServerModule,
 } from '@tailor-cms/cek-common';
-import { initState, mocks, type } from '@tailor-cms/ce-mux-video-manifest';
+import { initState, type } from '@tailor-cms/ce-mux-video-manifest';
 import type { Element } from '@tailor-cms/ce-mux-video-manifest';
 
 import { getVideoService } from './video-service';
@@ -39,8 +39,14 @@ export const onUserInteraction: OnUserInteractionHook<Element> = (
   _context,
   payload,
 ) => {
-  const { currentTime } = payload;
-  if (IS_CEK) USER_STATE.currentTime = currentTime;
+  const { currentTime, furthestTime } = payload;
+  if (IS_CEK) {
+    USER_STATE.currentTime = currentTime;
+    USER_STATE.furthestTime = Math.max(
+      USER_STATE.furthestTime ?? 0,
+      furthestTime,
+    );
+  }
   return { updateDisplayState: true };
 };
 
@@ -78,9 +84,8 @@ const serverModule: ServerModule<Element> = {
   afterLoaded,
   onUserInteraction,
   beforeDisplay,
-  mocks,
 };
 
 export default serverModule;
 
-export { type, initState, mocks };
+export { type, initState };

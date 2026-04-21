@@ -1,5 +1,3 @@
-import type { ElementMocks } from '@tailor-cms/cek-common';
-
 import type {
   DataInitializer,
   ElementData,
@@ -24,13 +22,6 @@ export const initState: DataInitializer = (): ElementData => ({
 export const version = '1.0';
 
 export const isEmpty = (data: ElementData): boolean => !data.playbackId;
-
-export const mocks: ElementMocks = {
-  displayContexts: [
-    { name: 'Default', data: {} },
-    { name: 'Has interacted', data: { interactionTimestamp: Date.now() } },
-  ],
-};
 
 // UI configuration for Tailor CMS
 const ui = {

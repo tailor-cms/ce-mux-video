@@ -8,7 +8,7 @@
       :playback-token="element.data.token"
       :thumbnail-token="element.data.thumbnailToken"
       style="aspect-ratio: 16/9"
-      @seeked="interact"
+      @seeked="handleSeeked"
       @timeupdate="handleTimeUpdate"
     >
       <track
@@ -36,11 +36,12 @@
 
 <script setup lang="ts">
 import '@mux/mux-player';
+import { debounce, throttle } from 'lodash-es';
 import { onMounted, useTemplateRef } from 'vue';
 import type { Element } from '@tailor-cms/ce-mux-video-manifest';
-import { throttle } from 'lodash-es';
 
 const PROGRESS_UPDATE_INTERVAL = 5000;
+const SEEK_DEBOUNCE_INTERVAL = 300;
 
 const props = defineProps<{ element: Element; userState: any }>();
 const emit = defineEmits<{ interaction: [data: any] }>();
@@ -49,9 +50,14 @@ const video = useTemplateRef<HTMLVideoElement>('video');
 
 const interact = () => {
   const currentTime = video.value!.currentTime;
-  emit('interaction', { currentTime });
+  const furthestTime = Math.max(
+    props.userState?.furthestTime ?? 0,
+    currentTime,
+  );
+  emit('interaction', { currentTime, furthestTime });
 };
 const handleTimeUpdate = throttle(interact, PROGRESS_UPDATE_INTERVAL);
+const handleSeeked = debounce(interact, SEEK_DEBOUNCE_INTERVAL);
 
 onMounted(() => {
   const currentTime = props.userState?.currentTime;
