@@ -48,8 +48,8 @@ export const onUserInteraction: OnUserInteractionHook<Element> = (
 export const hookMap: HookMap<Element> = new Map(
   Object.entries({
     afterLoaded,
-    onUserInteraction,
     beforeDisplay,
+    onUserInteraction,
   }),
 );
 
@@ -77,8 +77,8 @@ const serverModule: ServerModule<Element> = {
   hookMap,
   procedures,
   afterLoaded,
-  onUserInteraction,
   beforeDisplay,
+  onUserInteraction,
 };
 
 export default serverModule;
