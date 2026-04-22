@@ -119,6 +119,33 @@ test.describe('Captions', () => {
   });
 });
 
+test.describe('Readonly mode', () => {
+  test('Keeps placeholder visible but hides upload prompt', async ({
+    page,
+  }) => {
+    const edit = new Edit(page);
+    await edit.setReadonly();
+    await edit.focus();
+    await expect(edit.placeholder).toBeVisible();
+    await expect(
+      edit.el.getByText('Use toolbar to upload the video'),
+    ).not.toBeVisible();
+  });
+
+  test('Keeps player visible when set', async ({ page }) => {
+    await elementClient.update(ELEMENT_ID, {
+      playbackId: 'mock-playback-test',
+      assetId: 'mock-asset-test',
+      fileKey: 'mock/key',
+      assets: {},
+    });
+    await page.reload({ waitUntil: 'networkidle' });
+    const edit = new Edit(page);
+    await edit.setReadonly();
+    await expect(edit.player).toBeVisible();
+  });
+});
+
 test.afterAll(async () => {
   await elementClient.reset(ELEMENT_ID);
 });
