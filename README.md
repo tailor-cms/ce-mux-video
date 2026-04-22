@@ -33,6 +33,8 @@ playback, captions, and transcripts.
 - Renders the captions track when provided
 - "Transcript" button links to the uploaded transcript
 - Resumes playback from the last reported position via `userState`
+- Emits `interaction` event with `{ currentTime, furthestTime }` on playback,
+  throttled during playback and debounced on seek
 
 ## Development
 
