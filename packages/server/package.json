@@ -34,12 +34,12 @@
     "@mux/mux-node": "^12.1.0",
     "is-localhost-ip": "^3.0.1",
     "@tailor-cms/ce-mux-video-manifest": "workspace:*",
-    "@tailor-cms/cek-common": "^2.0.0-beta.12",
+    "@tailor-cms/cek-common": "^2.0.0-beta.13",
     "sequelize": "^6.37.7",
     "yup": "^1.7.1"
   },
   "devDependencies": {
-    "@tailor-cms/eslint-config": "^2.0.0-beta.12",
+    "@tailor-cms/eslint-config": "^2.0.0-beta.13",
     "tsdown": "^0.21.7",
     "typescript": "^6.0.2"
   },
