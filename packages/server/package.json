@@ -33,13 +33,13 @@
   "dependencies": {
     "@mux/mux-node": "^14.0.1",
     "@tailor-cms/ce-mux-video-manifest": "workspace:*",
-    "@tailor-cms/cek-common": "2.0.0-beta.13",
+    "@tailor-cms/cek-common": "2.0.0-beta.14",
     "is-localhost-ip": "^3.0.1",
     "sequelize": "^6.37.8",
     "yup": "^1.7.1"
   },
   "devDependencies": {
-    "@tailor-cms/eslint-config": "2.0.0-beta.13",
+    "@tailor-cms/eslint-config": "2.0.0-beta.14",
     "tsdown": "^0.21.9",
     "typescript": "^6.0.3"
   },
