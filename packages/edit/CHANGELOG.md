@@ -1,5 +1,11 @@
 # @tailor-cms/ce-mux-video-edit
 
+## 1.0.0
+
+### Major Changes
+
+- Migrated to CEK v2, added E2E tests.
+
 ## 0.0.6
 
 ### Patch Changes

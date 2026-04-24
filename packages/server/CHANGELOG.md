@@ -1,5 +1,16 @@
 # @tailor-cms/ce-mux-video-server
 
+## 1.0.0
+
+### Major Changes
+
+- Migrated to CEK v2, added E2E tests.
+
+### Patch Changes
+
+- Updated dependencies
+  - @tailor-cms/ce-mux-video-manifest@1.0.0
+
 ## 0.0.6
 
 ### Patch Changes
