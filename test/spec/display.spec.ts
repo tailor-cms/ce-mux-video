@@ -9,6 +9,7 @@ const TRANSCRIPT_URL = 'https://example.com/transcript.pdf';
 
 test.beforeEach(async ({ page }) => {
   await elementClient.reset(ELEMENT_ID);
+  await elementClient.resetState(ELEMENT_ID);
   await page.goto(`/?id=${ELEMENT_ID}`);
   await page.waitForLoadState('networkidle');
 });
@@ -48,8 +49,4 @@ test.describe('When video is set', () => {
     await expect(display.transcriptBtn).toHaveAttribute('href', TRANSCRIPT_URL);
     await expect(display.transcriptBtn).toHaveAttribute('target', '_blank');
   });
-});
-
-test.afterAll(async () => {
-  await elementClient.reset(ELEMENT_ID);
 });

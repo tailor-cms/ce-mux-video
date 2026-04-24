@@ -145,7 +145,3 @@ test.describe('Readonly mode', () => {
     await expect(edit.player).toBeVisible();
   });
 });
-
-test.afterAll(async () => {
-  await elementClient.reset(ELEMENT_ID);
-});
