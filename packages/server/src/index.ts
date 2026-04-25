@@ -1,124 +1,86 @@
-import type { HookServices, ServerRuntime } from '@tailor-cms/cek-common';
+import type {
+  BeforeDisplayHook,
+  ElementHook,
+  HookMap,
+  OnUserInteractionHook,
+  ProcedureHandler,
+  ServerModule,
+} from '@tailor-cms/cek-common';
 import { initState, type } from '@tailor-cms/ce-mux-video-manifest';
 import type { Element } from '@tailor-cms/ce-mux-video-manifest';
-import type { Model } from 'sequelize/types';
 
-import MuxService from './mux';
+import { getVideoService } from './video-service';
 
 // Detect if hooks are running in CEK (used for mocking end-system runtime)
 const IS_CEK = process.env.CEK_RUNTIME;
 // Don't use in production, use only when IS_CEK=true
 const USER_STATE: any = {};
 
-type SequelizeModel<T> = Model<T> & T;
-
-export async function beforeSave(
-  element: SequelizeModel<Element>,
-  services: HookServices,
-) {
-  const service = MuxService.get(services.config.tce);
-  const { assetId, playbackId, upload } = element.data;
-  const uploadId = upload?.id;
-  if (IS_CEK) {
-    const prevData = element.previous('data');
-    const prevAssetId =
-      prevData && typeof prevData === 'string'
-        ? JSON.parse(prevData).assetId
-        : prevData?.assetId;
-    if (prevAssetId && !assetId) await service.removeAsset(prevAssetId);
-  }
-  if (!uploadId) {
-    const upload = await service.createUpload();
-    element.data = { ...element.data, upload };
-  } else if (!playbackId) {
-    const { asset_id: assetId, ...upload } = await service.getUpload(uploadId);
-    const asset = await service.getAsset(assetId);
-    const playbackId = asset.playback_ids[0].id;
-    element.data = { ...element.data, upload, playbackId, assetId };
-  }
+export const afterLoaded: ElementHook<Element> = async (element, services) => {
+  const { playbackId } = element.data;
+  if (!playbackId) return element;
+  const service = getVideoService(services.config.tce);
+  const { token, thumbnailToken } = await service.getTokens(playbackId);
+  element.data = { ...element.data, token, thumbnailToken };
   return element;
-}
+};
 
-export function afterSave(element: Element, _services: HookServices) {
-  console.log('After save hook');
-  return element;
-}
-
-export async function afterLoaded(
-  element: SequelizeModel<Element>,
-  services: HookServices,
-  runtime: ServerRuntime,
-) {
-  const isAuthoringRuntime = runtime === 'authoring';
-  const service = MuxService.get(services.config.tce);
-  const uploadId = element.data.upload?.id;
-  const playbackId = element.data.playbackId;
-  if (isAuthoringRuntime && !uploadId) {
-    const upload = await service.createUpload();
-    element.data = { ...element.data, upload };
-  }
-  if (playbackId) {
-    const token = await service.getToken(playbackId);
-    element.data = { ...element.data, token };
-  }
-  return element;
-}
-
-export function afterRetrieve(
-  element: SequelizeModel<Element>,
-  _services: HookServices,
-  _runtime: ServerRuntime,
-) {
-  console.log('After retrieve hook');
-  return element;
-}
-
-export function beforeDisplay(_element: Element, context: any) {
-  console.log('beforeDisplay hook');
-  console.log('beforeDisplay context', context);
+export const beforeDisplay: BeforeDisplayHook<Element> = (
+  _element,
+  context,
+) => {
   return { ...context, ...USER_STATE };
-}
+};
 
-export function onUserInteraction(
-  _element: SequelizeModel<Element>,
-  context: any,
-  payload: any,
-): any {
-  console.log('onUserInteraction', context, payload);
-  // Simulate user state update within CEK
+export const onUserInteraction: OnUserInteractionHook<Element> = (
+  _element,
+  context,
+  payload,
+) => {
+  const { currentTime, furthestTime } = payload;
   if (IS_CEK) {
-    // Only for showcase purposes
-    USER_STATE.interactionTimestamp = new Date().getTime();
-    // Can be reset to initial / mocked state via UI
-    context.contextTimestamp = USER_STATE.interactionTimestamp;
-    Object.assign(USER_STATE, payload);
+    context.currentTime = currentTime;
+    context.furthestTime = Math.max(context.furthestTime ?? 0, furthestTime);
   }
-  // Can have arbitrary return value (interpreted by target system)
-  // FE is updated if updateDisplayState is true
   return { updateDisplayState: true };
-}
+};
 
-export const hookMap = new Map(
+export const hookMap: HookMap<Element> = new Map(
   Object.entries({
-    beforeSave,
-    afterSave,
     afterLoaded,
-    afterRetrieve,
-    onUserInteraction,
     beforeDisplay,
+    onUserInteraction,
   }),
 );
 
-export default {
-  type,
-  hookMap,
-  initState,
-  beforeSave,
-  afterSave,
-  afterLoaded,
-  afterRetrieve,
-  onUserInteraction,
-  beforeDisplay,
+export const procedures: Record<string, ProcedureHandler> = {
+  prepareVideo: async (services, { fileKey }) => {
+    if (!fileKey) throw new Error('No file key provided');
+    const service = getVideoService(services.config.tce);
+    const storageUrl = await services.storage.getFileUrl(fileKey);
+    return service.prepareVideo(storageUrl);
+  },
+  resolveAsset: async (services, payload) => {
+    const service = getVideoService(services.config.tce);
+    return service.resolveAsset(payload);
+  },
+  removeVideo: async (services, payload) => {
+    const { assetId } = payload;
+    if (!assetId) throw new Error('No asset ID provided');
+    await getVideoService(services.config.tce).removeVideo(assetId);
+  },
 };
+
+const serverModule: ServerModule<Element> = {
+  type,
+  initState,
+  hookMap,
+  procedures,
+  afterLoaded,
+  beforeDisplay,
+  onUserInteraction,
+};
+
+export default serverModule;
 
 export { type, initState };

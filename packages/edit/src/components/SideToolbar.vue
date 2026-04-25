@@ -30,26 +30,21 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineEmits, defineProps, inject } from 'vue';
-import {
-  createUploadForm,
-  InputFileEvent,
-  UploadFormData,
-} from '@tailor-cms/cek-common';
-import type { Element } from '@tailor-cms/ce-mux-video-manifest';
-import { last } from 'lodash-es';
+import { computed, inject } from 'vue';
+import type { Element, ElementData } from '@tailor-cms/ce-mux-video-manifest';
+import type { InputFileEvent } from '@tailor-cms/cek-common';
 import toWebVTT from 'srt-webvtt';
 
 const props = defineProps<{ element: Element }>();
-const emit = defineEmits(['save']);
+const emit = defineEmits<{ save: [data: ElementData] }>();
 
 const $storageService = inject('$storageService') as any;
 
 const transcript = computed(() => props.element.data.transcript);
 const captions = computed(() => props.element.data.captions);
 
-const getFileName = (url?: string | null): { name: string }[] | undefined => {
-  if (url) return [{ name: last(url.split('___')) || 'file' }];
+const getFileName = (url?: string | null): File[] | undefined => {
+  if (url) return [new File([], url.split('___').pop() || 'file')];
 };
 
 const saveData = (updates: Partial<Element['data']>) => {
@@ -57,9 +52,9 @@ const saveData = (updates: Partial<Element['data']>) => {
 };
 
 const uploadTranscript = async (e: InputFileEvent) => {
-  const form = createUploadForm(e);
-  if (!form) return;
-  const { url } = await $storageService.upload(form);
+  const [file] = Array.from(e.target.files || []);
+  if (!file) return;
+  const { url } = await $storageService.upload(file);
   const assets = { ...props.element.data.assets, transcript: url };
   saveData({ assets });
 };
@@ -76,10 +71,9 @@ const convertSrtToVtt = async (srtFile: File): Promise<File> => {
 const uploadCaptions = async (e: InputFileEvent) => {
   const [file] = e.target.files || [];
   if (!file) return;
-  const form: UploadFormData = new FormData();
   const isSRT = file.name.toLowerCase().endsWith('.srt');
-  form.append('file', isSRT ? await convertSrtToVtt(file) : file);
-  const { url } = await $storageService.upload(form);
+  const uploadFile = isSRT ? await convertSrtToVtt(file) : file;
+  const { url } = await $storageService.upload(uploadFile);
   const assets = { ...props.element.data.assets, captions: url };
   saveData({ assets });
 };

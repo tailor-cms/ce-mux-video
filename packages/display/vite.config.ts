@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import { libInjectCss } from 'vite-plugin-lib-inject-css';
 import vue from '@vitejs/plugin-vue';
 
 import { resolve } from 'node:path';
@@ -13,6 +14,7 @@ export default defineConfig({
         },
       },
     }),
+    libInjectCss(),
   ],
   build: {
     // In order to avoid display runtime issues
@@ -26,17 +28,10 @@ export default defineConfig({
       fileName: 'index',
       formats: ['es', 'cjs'],
     },
-    rollupOptions: {
-      // make sure to externalize deps that shouldn't be bundled
-      // into your library
+    rolldownOptions: {
       external: ['vue'],
       output: {
-        intro: 'import "./index.css";',
-        // Provide global variables to use in the UMD build
-        // for externalized deps
-        globals: {
-          vue: 'Vue',
-        },
+        exports: 'named',
       },
     },
   },

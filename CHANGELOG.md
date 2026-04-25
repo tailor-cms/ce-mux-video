@@ -1,5 +1,27 @@
 # Changelog
 
+### v2.0.0 2026-04-25
+
+Part of the [Tailor CEK v2 release line][xt-v2]. The four subpackages
+(`@tailor-cms/ce-mux-video-display`, `-edit`, `-manifest`, `-server`) now
+release in lockstep.
+
+[xt-v2]: https://github.com/tailor-cms/xt/blob/main/CHANGELOG.md#v200-2026-04-25
+
+#### Breaking changes
+- Requires **Vuetify 4** and **Node `>=24`**
+- Consumes `@tailor-cms/cek-common@^2.0.0`
+- Upload flow reworked: video is uploaded to storage (S3) first and then
+  ingested by Mux from that location, instead of being pushed directly
+  to Mux from the client. Local dev takes a different path
+- Upload / ingest / cleanup moved from server hooks to **RPC procedures**:
+  `prepareVideo`, `resolveAsset`, `removeVideo` (called from Edit via
+  `$rpc`)
+
+See the [xt v2.0.0 release notes][xt-v2] for the CEK v2 platform migration
+guide.
+
+
 ### v1.1.1 2025-07-14
 - Reverted `chalk` version to one supporting commonjs.
 

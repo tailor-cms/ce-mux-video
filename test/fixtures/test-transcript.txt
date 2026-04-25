@@ -1,0 +1,1 @@
+Sample transcript used by ce-mux-video E2E tests.
