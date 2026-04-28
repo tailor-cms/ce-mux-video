@@ -1,5 +1,8 @@
 # Changelog
 
+### v2.0.1 2026-04-28
+- Move getting token to rpc.
+
 ### v2.0.0 2026-04-25
 
 Part of the [Tailor CEK v2 release line][xt-v2]. The four subpackages
