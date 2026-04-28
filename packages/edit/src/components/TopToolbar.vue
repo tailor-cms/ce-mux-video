@@ -75,17 +75,24 @@ const cancelUpload = () => {
   error.value = '';
 };
 
+type ReadyAsset = {
+  status: 'ready';
+  assetId: string;
+  playbackId: string;
+  token: string;
+  thumbnailToken: string;
+};
+
 const waitForAsset = async (params: {
   assetId?: string;
   uploadId?: string;
-}) => {
+}): Promise<ReadyAsset> => {
   for (let attempt = 0; attempt < MAX_POLL_ATTEMPTS; attempt++) {
-    const result = await rpc<{
-      status: string;
-      assetId?: string;
-      playbackId?: string;
-    }>('resolveAsset', params);
-    if (result.status === 'ready') return result;
+    const result = await rpc<ReadyAsset | { status: string }>(
+      'resolveAsset',
+      params,
+    );
+    if (result.status === 'ready') return result as ReadyAsset;
     await delay(POLL_INTERVAL);
   }
   throw new Error('Video processing timed out');
@@ -133,13 +140,16 @@ const onVideoFile = async (value: Record<string, any> | null) => {
       pollParams = { uploadId: result.uploadId };
     }
     processing.value = true;
-    const { assetId, playbackId } = await waitForAsset(pollParams);
+    const { assetId, playbackId, token, thumbnailToken } =
+      await waitForAsset(pollParams);
     emit('save', {
       ...props.element.data,
       fileKey: value.key,
       fileName: value.name || value.key.split('/').pop(),
       assetId,
       playbackId,
+      token,
+      thumbnailToken,
     });
   } catch (e: any) {
     error.value = e.message || 'Video processing failed';

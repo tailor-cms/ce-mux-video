@@ -29,6 +29,8 @@ export default class MockVideoService implements VideoService {
       status: 'ready',
       assetId: input.assetId ?? `mock-asset-from-${input.uploadId}`,
       playbackId: `mock-playback-${id}`,
+      token: 'mock-token',
+      thumbnailToken: 'mock-thumbnail-token',
     });
   }
 

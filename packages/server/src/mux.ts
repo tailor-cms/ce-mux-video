@@ -94,7 +94,14 @@ export default class MuxVideoService implements VideoService {
     if (asset.status === 'errored') throw new Error('Asset processing failed');
     if (asset.status === 'ready') {
       const playbackId = asset.playback_ids[0].id;
-      return { status: 'ready' as const, assetId, playbackId };
+      const { token, thumbnailToken } = await this.getTokens(playbackId);
+      return {
+        status: 'ready' as const,
+        assetId,
+        playbackId,
+        token,
+        thumbnailToken,
+      };
     }
     return { status: asset.status };
   }
