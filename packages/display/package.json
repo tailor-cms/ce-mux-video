@@ -25,7 +25,7 @@
     "prepublish": "pnpm build"
   },
   "dependencies": {
-    "@mux/mux-player": "^3.11.8",
+    "@mux/mux-player": "^3.12.0",
     "lodash-es": "^4.18.1"
   },
   "devDependencies": {
