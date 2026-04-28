@@ -69,6 +69,10 @@ export const procedures: Record<string, ProcedureHandler> = {
     if (!assetId) throw new Error('No asset ID provided');
     await getVideoService(services.config.tce).removeVideo(assetId);
   },
+  getTokens: async (services, { playbackId }) => {
+    if (!playbackId) throw new Error('No playback ID provided');
+    return getVideoService(services.config.tce).getTokens(playbackId);
+  },
 };
 
 const serverModule: ServerModule<Element> = {

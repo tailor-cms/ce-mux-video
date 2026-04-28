@@ -11,10 +11,10 @@
       active-placeholder="Use toolbar to upload the video"
     />
     <mux-player
-      v-else
+      v-else-if="token"
       :playback-id="element.data.playbackId"
-      :playback-token="element.data.token"
-      :thumbnail-token="element.data.thumbnailToken"
+      :playback-token="token"
+      :thumbnail-token="thumbnailToken"
       style="aspect-ratio: 16/9"
     />
   </div>
@@ -23,15 +23,38 @@
 <script lang="ts" setup>
 import '@mux/mux-player';
 import type { Element, ElementData } from '@tailor-cms/ce-mux-video-manifest';
+import { inject, ref, watch } from 'vue';
 import manifest from '@tailor-cms/ce-mux-video-manifest';
+import type { RpcCaller } from '@tailor-cms/cek-common';
 
-defineEmits<{ save: [data: ElementData] }>();
-defineProps<{
+const props = defineProps<{
   element: Element;
   isDragged: boolean;
   isReadonly: boolean;
   isFocused: boolean;
 }>();
+defineEmits<{ save: [data: ElementData] }>();
+
+const rpc = inject<RpcCaller>('$rpc')!;
+
+const token = ref<string>();
+const thumbnailToken = ref<string>();
+
+watch(
+  () => props.element.data.playbackId,
+  async (playbackId) => {
+    token.value = undefined;
+    thumbnailToken.value = undefined;
+    if (!playbackId) return;
+    const result = await rpc<{ token: string; thumbnailToken: string }>(
+      'getTokens',
+      { playbackId },
+    );
+    token.value = result.token;
+    thumbnailToken.value = result.thumbnailToken;
+  },
+  { immediate: true },
+);
 </script>
 
 <style scoped>
