@@ -2,6 +2,7 @@
   "name": "@tailor-cms/ce-mux-video-display",
   "description": "Tailor CMS MUX video end-user component",
   "author": "Studion <info@gostudion.com> (https://github.com/tailor-cms)",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tailor-cms/ce-mux-video.git",
