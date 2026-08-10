@@ -2,6 +2,13 @@
   "name": "@tailor-cms/ce-mux-video-manifest",
   "description": "Tailor CMS MUX video element manifest",
   "author": "Studion <info@gostudion.com> (https://github.com/tailor-cms)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tailor-cms/ce-mux-video.git",
+    "directory": "packages/manifest"
+  },
+  "homepage": "https://github.com/tailor-cms/ce-mux-video#readme",
+  "bugs": "https://github.com/tailor-cms/ce-mux-video/issues",
   "type": "module",
   "version": "2.0.4",
   "exports": {
