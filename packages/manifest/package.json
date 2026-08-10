@@ -3,7 +3,7 @@
   "description": "Tailor CMS MUX video element manifest",
   "author": "Studion <info@gostudion.com> (https://github.com/tailor-cms)",
   "type": "module",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "exports": {
     ".": {
       "import": {
@@ -31,12 +31,12 @@
     "prepublish": "pnpm build"
   },
   "devDependencies": {
-    "@tailor-cms/eslint-config": "2.0.1",
-    "tsdown": "^0.21.10",
+    "@tailor-cms/eslint-config": "2.0.3",
+    "tsdown": "^0.22.14",
     "typescript": "^6.0.3"
   },
   "dependencies": {
-    "@tailor-cms/cek-common": "2.0.1"
+    "@tailor-cms/cek-common": "2.0.3"
   },
   "tsdown": {
     "target": "node24",
@@ -49,6 +49,6 @@
     "access": "public"
   },
   "engines": {
-    "node": ">=24"
+    "node": ">=26"
   }
 }
