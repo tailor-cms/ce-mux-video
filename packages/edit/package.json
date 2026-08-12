@@ -11,7 +11,7 @@
   "homepage": "https://github.com/tailor-cms/ce-mux-video#readme",
   "bugs": "https://github.com/tailor-cms/ce-mux-video/issues",
   "type": "module",
-  "version": "2.0.3",
+  "version": "2.1.0",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -35,12 +35,12 @@
   "dependencies": {
     "@mux/mux-player": "^3.12.0",
     "@mux/upchunk": "^3.5.0",
-    "@tailor-cms/cek-common": "2.0.3",
+    "@tailor-cms/cek-common": "2.1.0",
     "srt-webvtt": "^2.0.0"
   },
   "devDependencies": {
     "@tailor-cms/ce-mux-video-manifest": "workspace:*",
-    "@tailor-cms/eslint-config": "2.0.3",
+    "@tailor-cms/eslint-config": "2.1.0",
     "@vitejs/plugin-vue": "^6.0.8",
     "typescript": "^6.0.3",
     "vite": "^8.2.1",

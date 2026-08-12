@@ -6,8 +6,8 @@ import type {
   ProcedureHandler,
   ServerModule,
 } from '@tailor-cms/cek-common';
-import { initState, type } from '@tailor-cms/ce-mux-video-manifest';
 import type { Element } from '@tailor-cms/ce-mux-video-manifest';
+import manifest from '@tailor-cms/ce-mux-video-manifest';
 
 import { getVideoService } from './video-service';
 
@@ -72,8 +72,7 @@ export const procedures: Record<string, ProcedureHandler> = {
 };
 
 const serverModule: ServerModule<Element> = {
-  type,
-  initState,
+  ...manifest,
   hookMap,
   procedures,
   afterLoaded,
@@ -82,5 +81,3 @@ const serverModule: ServerModule<Element> = {
 };
 
 export default serverModule;
-
-export { type, initState };
