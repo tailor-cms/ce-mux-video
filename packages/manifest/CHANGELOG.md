@@ -1,5 +1,11 @@
 # @tailor-cms/ce-mux-video-manifest
 
+## 2.1.0
+
+### Minor Changes
+
+- Migrate to the latest CEK version.
+
 ## 2.0.3
 
 ### Patch Changes
