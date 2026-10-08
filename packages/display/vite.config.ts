@@ -23,10 +23,9 @@ export default defineConfig({
     minify: false,
     cssCodeSplit: false,
     lib: {
-      entry: resolve(__dirname, './src/index.ts'),
-      name: 'TceDisplay',
+      entry: resolve(import.meta.dirname, './src/index.ts'),
       fileName: 'index',
-      formats: ['es', 'cjs'],
+      formats: ['es'],
     },
     rolldownOptions: {
       external: ['vue'],
