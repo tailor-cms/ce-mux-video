@@ -6,8 +6,8 @@
       ref="video"
       :playback-id="element.data.playbackId"
       :playback-token="element.data.token"
+      :style="{ aspectRatio: element.data.aspectRatio }"
       :thumbnail-token="element.data.thumbnailToken"
-      style="aspect-ratio: 16/9"
       @seeked="handleSeeked"
       @timeupdate="handleTimeUpdate"
     >
@@ -69,8 +69,3 @@ onMounted(() => {
   );
 });
 </script>
-
-<style scoped>
-.tce-mux-video-root {
-}
-</style>

@@ -1,5 +1,11 @@
 # @tailor-cms/ce-mux-video-manifest
 
+## 3.0.0
+
+### Major Changes
+
+- Migrate to CEK 2.3.1. Packages are now ESM-only: CommonJS builds and the `main` / `require` entry points are removed, and the manifest and server packages emit `index.js` / `index.d.ts` instead of `index.mjs` / `index.d.mts`. The top toolbar is removed; video upload, replace and remove now happen in the element body through the `TailorFileInput` dropzone, with upload and processing progress shown in place.
+
 ## 2.1.0
 
 ### Minor Changes

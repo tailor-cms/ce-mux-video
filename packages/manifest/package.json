@@ -11,21 +11,14 @@
   "homepage": "https://github.com/tailor-cms/ce-mux-video#readme",
   "bugs": "https://github.com/tailor-cms/ce-mux-video/issues",
   "type": "module",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/index.d.mts",
-        "default": "./dist/index.mjs"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     }
   },
-  "main": "./dist/index.cjs",
-  "types": "./dist/index.d.cts",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
@@ -39,19 +32,16 @@
     "prepublish": "pnpm build"
   },
   "devDependencies": {
-    "@tailor-cms/eslint-config": "2.1.0",
-    "tsdown": "^0.22.14",
+    "@tailor-cms/eslint-config": "2.3.1",
+    "tsdown": "^0.23.0",
     "typescript": "^6.0.3"
   },
   "dependencies": {
-    "@tailor-cms/cek-common": "2.1.0"
+    "@tailor-cms/cek-common": "2.3.1"
   },
   "tsdown": {
-    "target": "node24",
-    "format": [
-      "cjs",
-      "esm"
-    ]
+    "target": "node26",
+    "fixedExtension": false
   },
   "publishConfig": {
     "access": "public"
