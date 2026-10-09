@@ -29,6 +29,7 @@ export default class MockVideoService implements VideoService {
       status: 'ready',
       assetId: input.assetId ?? `mock-asset-from-${input.uploadId}`,
       playbackId: `mock-playback-${id}`,
+      aspectRatio: '16/9',
     });
   }
 

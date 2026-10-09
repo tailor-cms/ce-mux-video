@@ -58,9 +58,9 @@
       <mux-player
         :playback-id="element.data.playbackId"
         :playback-token="element.data.token"
+        :style="{ aspectRatio: element.data.aspectRatio }"
         :thumbnail-token="element.data.thumbnailToken"
         class="d-block w-100"
-        style="aspect-ratio: 16/9"
       />
     </TailorFileInput>
   </div>
@@ -119,6 +119,7 @@ const waitForAsset = async (params: {
       status: string;
       assetId?: string;
       playbackId?: string;
+      aspectRatio?: string;
     }>('resolveAsset', params);
     if (result.status === 'ready') return result;
     await delay(POLL_INTERVAL);
@@ -170,13 +171,15 @@ const onVideoFile = async (value: Record<string, any> | null) => {
       await chunkedUpload(result.uploadUrl, file);
       pollParams = { uploadId: result.uploadId };
     }
-    const { assetId, playbackId } = await waitForAsset(pollParams);
+    const { assetId, playbackId, aspectRatio } =
+      await waitForAsset(pollParams);
     emit('save', {
       ...props.element.data,
       fileKey: value.key,
       fileName: value.name || value.key.split('/').pop(),
       assetId,
       playbackId,
+      aspectRatio,
     });
   } catch (e: any) {
     error.value = e.message || 'Video processing failed';
@@ -199,6 +202,7 @@ const remove = async () => {
       thumbnailToken: undefined,
       fileName: undefined,
       playbackId: undefined,
+      aspectRatio: undefined,
       assetId: undefined,
     });
   }
