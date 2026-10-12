@@ -12,55 +12,82 @@ test.beforeEach(async ({ page }) => {
   await page.waitForLoadState('networkidle');
 });
 
-test.describe('Video', () => {
-  test('Shows placeholder when empty', async ({ page }) => {
+const MOCK_VIDEO = {
+  playbackId: 'mock-playback-test',
+  assetId: 'mock-asset-test',
+  fileKey: 'mock/test-video.mp4',
+  fileName: 'test-video.mp4',
+  assets: {},
+};
+
+test.describe('When video is not set', () => {
+  test('Shows dropzone as empty state', async ({ page }) => {
     const edit = new Edit(page);
-    await expect(edit.placeholder).toBeVisible();
+    await expect(edit.fileInput.dropzone).toBeVisible();
+    await expect(edit.fileInput.dropzoneUrlBtn).not.toBeVisible();
+    await expect(edit.placeholder).not.toBeVisible();
     await expect(edit.player).not.toBeVisible();
   });
 
-  test('Upload dialog lists accepted extensions', async ({ page }) => {
+  test('Dropzone accepts video extensions only', async ({ page }) => {
     const edit = new Edit(page);
-    await edit.focus();
-    await edit.videoFileInput.open();
-    const accept = await edit.videoFileInput.fileInput.getAttribute('accept');
-    expect(accept).toContain('.mp4');
-    expect(accept).toContain('.mov');
-    expect(accept).toContain('.avi');
-    expect(accept).toContain('.mkv');
-    await edit.videoFileInput.cancel();
+    const accept =
+      await edit.fileInput.dropzoneFileInput.getAttribute('accept');
+    for (const ext of ['.mp4', '.mov', '.avi', '.mkv'])
+      expect(accept).toContain(ext);
   });
 
-  test('Uploads and persists player across reload', async ({ page }) => {
+  test('Uploads via dropzone, processes and persists player across reload', async ({
+    page,
+  }) => {
     const edit = new Edit(page);
     await edit.focus();
-    await expect(edit.uploadingText).not.toBeVisible();
-    await expect(edit.processingText).not.toBeVisible();
-    await edit.videoFileInput.open();
-    await edit.videoFileInput.upload(VIDEO);
+    await edit.fileInput.dropzoneUpload(VIDEO);
     await expect(edit.processingText).toBeVisible();
+    await expect(edit.fileInput.dropzone).not.toBeVisible();
     await expect(edit.player).toBeVisible({ timeout: 15_000 });
-    await expect(edit.placeholder).not.toBeVisible();
+    await expect(edit.processingText).not.toBeVisible();
+    await edit.fileInput.expectFile('test-video.mp4');
 
     await page.reload({ waitUntil: 'networkidle' });
     await expect(edit.player).toBeVisible();
-    await expect(edit.placeholder).not.toBeVisible();
+    await expect(edit.fileInput.dropzone).not.toBeVisible();
   });
 
-  test('Can remove uploaded video', async ({ page }) => {
-    await elementClient.update(ELEMENT_ID, {
-      playbackId: 'mock-playback-test',
-      assetId: 'mock-asset-test',
-      fileKey: 'mock/key',
-      assets: {},
-    });
+  test('Rejects non-video file', async ({ page }) => {
+    const edit = new Edit(page);
+    await edit.focus();
+    await edit.fileInput.dropzoneUpload(TRANSCRIPT);
+    await expect(edit.processingText).not.toBeVisible();
+    await expect(edit.fileInput.dropzone).toBeVisible();
+    await expect(edit.player).not.toBeVisible();
+  });
+});
+
+test.describe('When video is set', () => {
+  test.beforeEach(async ({ page }) => {
+    await elementClient.update(ELEMENT_ID, MOCK_VIDEO);
     await page.reload({ waitUntil: 'networkidle' });
+  });
+
+  test('Shows player', async ({ page }) => {
     const edit = new Edit(page);
     await expect(edit.player).toBeVisible();
+    await expect(edit.player).toHaveAttribute(
+      'playback-id',
+      MOCK_VIDEO.playbackId,
+    );
+    await expect(edit.fileInput.dropzone).not.toBeVisible();
+  });
+
+  test('Can remove video', async ({ page }) => {
+    const edit = new Edit(page);
     await edit.focus();
-    await edit.videoFileInput.remove();
-    await expect(edit.placeholder).toBeVisible();
+    await edit.fileInput.removeFromRow();
     await expect(edit.player).not.toBeVisible();
+    await expect(edit.fileInput.dropzone).toBeVisible();
+    await page.reload({ waitUntil: 'networkidle' });
+    await expect(edit.fileInput.dropzone).toBeVisible();
   });
 });
 
@@ -120,28 +147,22 @@ test.describe('Captions', () => {
 });
 
 test.describe('Readonly mode', () => {
-  test('Keeps placeholder visible but hides upload prompt', async ({
-    page,
-  }) => {
+  test('Shows placeholder instead of dropzone when empty', async ({ page }) => {
     const edit = new Edit(page);
     await edit.setReadonly();
-    await edit.focus();
     await expect(edit.placeholder).toBeVisible();
-    await expect(
-      edit.el.getByText('Use toolbar to upload the video'),
-    ).not.toBeVisible();
+    await expect(edit.fileInput.dropzone).not.toBeVisible();
   });
 
-  test('Keeps player visible when set', async ({ page }) => {
-    await elementClient.update(ELEMENT_ID, {
-      playbackId: 'mock-playback-test',
-      assetId: 'mock-asset-test',
-      fileKey: 'mock/key',
-      assets: {},
-    });
+  test('Keeps player visible and hides file actions when set', async ({
+    page,
+  }) => {
+    await elementClient.update(ELEMENT_ID, MOCK_VIDEO);
     await page.reload({ waitUntil: 'networkidle' });
     const edit = new Edit(page);
     await edit.setReadonly();
+    await edit.focus();
     await expect(edit.player).toBeVisible();
+    await expect(edit.fileInput.replaceBtn).not.toBeVisible();
   });
 });

@@ -6,6 +6,8 @@ export interface ElementData extends common.ElementConfig {
   fileName?: string;
   assetId?: string;
   playbackId?: string;
+  // CSS aspect-ratio of the source video, e.g. '16/9'
+  aspectRatio?: string;
   token?: string;
   thumbnailToken?: string;
   transcript?: string | null;

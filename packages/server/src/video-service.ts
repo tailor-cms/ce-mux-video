@@ -6,7 +6,13 @@ export type PrepareVideoResult =
   | { mode: 'upload'; uploadId: string; uploadUrl: string };
 
 export type ResolveAssetResult =
-  { status: 'ready'; assetId: string; playbackId: string } | { status: string };
+  | {
+      status: 'ready';
+      assetId: string;
+      playbackId: string;
+      aspectRatio?: string;
+    }
+  | { status: string };
 
 export interface VideoService {
   prepareVideo(storageUrl: string): Promise<PrepareVideoResult>;

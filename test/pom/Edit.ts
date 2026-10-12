@@ -5,10 +5,10 @@ export class Edit extends pom.EditPanel {
   readonly root: Locator;
   readonly placeholder: Locator;
   readonly player: Locator;
-  readonly videoFileInput: pom.FileInput;
+  readonly fileInput: pom.FileInput;
   readonly uploadingText: Locator;
   readonly processingText: Locator;
-  readonly cancelUploadBtn: Locator;
+  readonly errorText: Locator;
   readonly transcriptField: Locator;
   readonly transcriptInput: Locator;
   readonly transcriptClearBtn: Locator;
@@ -21,12 +21,11 @@ export class Edit extends pom.EditPanel {
     this.root = this.editor.locator('.tce-mux-video');
     this.placeholder = this.editor.getByText('MUX Video component');
     this.player = this.editor.locator('mux-player');
-    this.videoFileInput = new pom.FileInput(this.el);
-    this.uploadingText = this.topToolbar.getByText('Uploading video...');
-    this.processingText = this.topToolbar.getByText('Processing video...');
-    this.cancelUploadBtn = this.topToolbar.getByRole('button', {
-      name: 'Cancel',
-    });
+    this.fileInput = new pom.FileInput(this.el);
+    const statusPanel = this.root.locator('.status-panel');
+    this.uploadingText = statusPanel.getByText('Uploading video');
+    this.processingText = statusPanel.getByText('Processing video');
+    this.errorText = statusPanel.getByText('Video processing failed');
     this.transcriptField = this.sideToolbar
       .locator('.v-input')
       .filter({ hasText: 'Transcript' });
