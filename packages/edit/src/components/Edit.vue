@@ -171,8 +171,7 @@ const onVideoFile = async (value: Record<string, any> | null) => {
       await chunkedUpload(result.uploadUrl, file);
       pollParams = { uploadId: result.uploadId };
     }
-    const { assetId, playbackId, aspectRatio } =
-      await waitForAsset(pollParams);
+    const { assetId, playbackId, aspectRatio } = await waitForAsset(pollParams);
     emit('save', {
       ...props.element.data,
       fileKey: value.key,
